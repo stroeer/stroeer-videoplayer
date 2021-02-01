@@ -1,6 +1,5 @@
-// eslint-disable-next-line
 const noop = (): boolean => {
-	return false;
-};
+  return false
+}
 
-export default noop;
+export default noop

@@ -9,7 +9,7 @@
  "scripts": {
   "build": "rollup -c",
   "build:watch": "rollup -c -w",
-  "lint": "eslint src/**",
+  "lint": "ts-standard src/*.ts src/**/*.ts",
   "test": "jest",
   "test:coverage": "jest --coverage",
   "test:badges": "jest --coverage && jest-coverage-badges"
@@ -34,6 +34,8 @@
   "rollup": "^2.38.0",
   "ts-jest": "^26.5.0",
   "ts-node": "^9.1.1",
+  "ts-standard": "^10.0.0",
+  "tslib": "^2.1.0",
   "typescript": "^4.1.3"
  }
 }
