@@ -6,6 +6,10 @@ Ströer Videoplayer
 [![Lint](https://github.com/stroeer/stroeer-videoplayer/workflows/Lint/badge.svg)](https://github.com/stroeer/stroeer-videoplayer/actions?query=workflow%3ALint)
 [![Github Release](https://github.com/stroeer/stroeer-videoplayer/workflows/Upload%20Release%20Asset%20to%20Github/badge.svg)](https://github.com/stroeer/stroeer-videoplayer/actions?query=workflow%3A%22Upload+Release+Asset+to+Github%22)
 [![Publish to NPM](https://github.com/stroeer/stroeer-videoplayer/workflows/Publish%20to%20NPM/badge.svg)](https://github.com/stroeer/stroeer-videoplayer/actions?query=workflow%3A%22Publish+to+NPM%22)
+![Coverage Branches](coverage/badge-branches.svg)
+![Coverage Functions](coverage/badge-functions.svg)
+![Coverage Lines](coverage/badge-lines.svg)
+![Coverage Statements](coverage/badge-statements.svg)
 
 Home of the new videoplayer; developed by SMB and t-online.
 
