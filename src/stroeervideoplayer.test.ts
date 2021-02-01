@@ -20,6 +20,9 @@ it('should return false for .isLoggingEnabled()', () => {
 });
 
 it('should not log when logging is not enabled', () => {
+	jest.spyOn(console, 'log').mockImplementation(() => {
+		return;
+	});
 	expect(strooervideoplayer.log()('info', 1)).toBe(false);
 });
 
