@@ -11,7 +11,7 @@ Home of the new videoplayer; developed by SMB and t-online.
 
 ## Development
 
-Install via dependencie via `yarn --dev`.
+Install via dependencies via `yarn --dev`.
 
 Build via `yarn run build`. Lint via `yarn run lint`. Test via `yarn run test`.
 
