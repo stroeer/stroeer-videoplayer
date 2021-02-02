@@ -2,12 +2,12 @@ import typescript from '@rollup/plugin-typescript'
 import json from '@rollup/plugin-json'
 
 export default {
-  input: 'src/stroeervideoplayer.ts',
+  input: 'src/StroeerVideoplayer.ts',
   output: {
     dir: 'dist',
     exports: 'default',
     format: 'umd',
-    name: 'stroeervideoplayer',
+    name: 'StroeerVideoplayer',
     sourcemap: true
   },
   plugins: [
