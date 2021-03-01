@@ -1,11 +1,13 @@
 import StrooerVideoplayer from './StroeerVideoplayer'
 import { version } from '../package.json'
 
+const containerEl = document.createElement('div')
 const videoEl = document.createElement('video')
 Object.defineProperty(videoEl, 'duration', { value: 9 })
 const source1 = document.createElement('source')
 source1.type = 'video/mp4'
 source1.src = 'https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-240p.mp4'
+containerEl.appendChild(videoEl)
 
 const p1 = new StrooerVideoplayer(videoEl)
 
@@ -132,13 +134,126 @@ it('should trigger contentVideoEnded', () => {
   expect(triggered).toBe(true)
 })
 
-it('should trigger replay', () => {
-  let triggered = false
-  videoEl.addEventListener('replay', () => {
-    triggered = true
+it('should register an UI', () => {
+  const retval = StrooerVideoplayer.registerUI({
+    uiName: 'default',
+    init: () => {
+      return true
+    },
+    deinit: () => {
+      return true
+    }
   })
-  videoEl.dispatchEvent(new window.Event('play'))
-  videoEl.dispatchEvent(new window.Event('ended'))
-  videoEl.dispatchEvent(new window.Event('play'))
-  expect(triggered).toBe(true)
+  expect(retval).toBe(true)
+})
+
+it('should not register an already registered UI with the same name', () => {
+  const retval = StrooerVideoplayer.registerUI({
+    uiName: 'default',
+    init: () => {
+      return true
+    },
+    deinit: () => {
+      return true
+    }
+  })
+  expect(retval).toBe(false)
+})
+
+it('should init the default UI', () => {
+  const retval = p1.initUI('default')
+  expect(retval).toBe(true)
+})
+
+it('should return the default UI name', () => {
+  const retval = p1.getUIName()
+  expect(retval).toBe('default')
+})
+
+it('should not init the foorbarbaz UI', () => {
+  const retval = p1.initUI('foorbarbaz')
+  expect(retval).toBe(false)
+})
+
+it('should deinit the default UI', () => {
+  const retval = p1.deinitUI('default')
+  expect(retval).toBe(true)
+})
+
+it('should not deinit the foorbarbaz UI', () => {
+  const retval = p1.deinitUI('foorbarbaz')
+  expect(retval).toBe(false)
+})
+
+it('the default UI name should be default', () => {
+  const retval = StrooerVideoplayer.getDefaultUIName()
+  expect(retval).toBe('default')
+})
+
+it('the default UI name should be t-online', () => {
+  StrooerVideoplayer.setDefaultUIName('t-online')
+  const retval = StrooerVideoplayer.getDefaultUIName()
+  expect(retval).toBe('t-online')
+})
+
+it('should be the UI Element from the datastore', () => {
+  const retval = p1.getDataStore().uiEl
+  expect(retval).toBe(p1.getUIEl())
+})
+
+it('should be the Root Element from the datastore', () => {
+  const retval = p1.getDataStore().rootEl
+  expect(retval).toBe(p1.getRootEl())
+})
+
+it('should be the Video Element from the datastore', () => {
+  const retval = p1.getDataStore().videoEl
+  expect(retval).toBe(p1.getVideoEl())
+})
+
+// Plugin testing
+it('should register a Plugin', () => {
+  const retval = StrooerVideoplayer.registerPlugin({
+    pluginName: 'ivad',
+    init: () => {
+      return true
+    },
+    deinit: () => {
+      return true
+    }
+  })
+  expect(retval).toBe(true)
+})
+
+it('should not register an already registered Plugin with the same name', () => {
+  const retval = StrooerVideoplayer.registerPlugin({
+    pluginName: 'ivad',
+    init: () => {
+      return true
+    },
+    deinit: () => {
+      return true
+    }
+  })
+  expect(retval).toBe(false)
+})
+
+it('should init the ivad Plugin', () => {
+  const retval = p1.initPlugin('ivad')
+  expect(retval).toBe(true)
+})
+
+it('should not init the foorbarbaz Plugin', () => {
+  const retval = p1.initPlugin('foorbarbaz')
+  expect(retval).toBe(false)
+})
+
+it('should deinit the ivad Plugin', () => {
+  const retval = p1.deinitPlugin('ivad')
+  expect(retval).toBe(true)
+})
+
+it('should not deinit the foorbarbaz Plugin', () => {
+  const retval = p1.deinitPlugin('foorbarbaz')
+  expect(retval).toBe(false)
 })

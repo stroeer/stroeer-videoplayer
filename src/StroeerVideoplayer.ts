@@ -5,13 +5,28 @@ import { version } from '../package.json'
 
 interface IDataStore {
   loggingEnabled: boolean
+  defaultUIName: string
   version: string
+}
+
+interface IRegisteredUI {
+  uiName: string
+  init: Function
+  deinit: Function
+}
+
+interface IRegisteredPlugin {
+  pluginName: string
+  init: Function
+  deinit: Function
 }
 
 interface IStrooerVideoplayerDataStore {
   isInitialized: boolean
   isPaused: boolean
   videoEl: HTMLVideoElement
+  rootEl: HTMLDivElement
+  uiEl: HTMLDivElement
   videoFirstPlay: boolean
   contentVideoStarted: boolean
   contentVideoEnded: boolean
@@ -19,12 +34,17 @@ interface IStrooerVideoplayerDataStore {
   contentVideoMidpoint: boolean
   contentVideoThirdQuartile: boolean
   isContentVideo: boolean
+  uiName: string | undefined
 }
 
 const _dataStore: IDataStore = {
+  defaultUIName: 'default',
   loggingEnabled: convertLocalStorageIntegerToBoolean('StroeerVideoplayerLoggingEnabled'),
   version: version
 }
+
+const _registeredUIs = new Map()
+const _registeredPlugins = new Map()
 
 class StrooerVideoplayer {
   _dataStore: IStrooerVideoplayerDataStore
@@ -35,17 +55,28 @@ class StrooerVideoplayer {
       isInitialized: false,
       isPaused: false,
       videoEl: videoEl,
+      rootEl: document.createElement('div'),
+      uiEl: document.createElement('div'),
       videoFirstPlay: true,
       contentVideoStarted: false,
       contentVideoEnded: false,
       contentVideoFirstQuartile: false,
       contentVideoMidpoint: false,
       contentVideoThirdQuartile: false,
-      isContentVideo: true
+      isContentVideo: true,
+      uiName: _dataStore.defaultUIName
     }
     this.version = version
 
     const ds = this._dataStore
+
+    if (ds.videoEl.parentNode !== null) {
+      ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
+      ds.rootEl.appendChild(ds.uiEl)
+      ds.rootEl.appendChild(ds.videoEl)
+      ds.rootEl.className = 'stroeer-videoplayer'
+      ds.uiEl.className = 'stroeer-videoplayer-ui'
+    }
 
     if (videoEl.getAttribute('data-stroeervp-initialized') === null) {
       videoEl.setAttribute('data-stroeervp-initialized', '1')
@@ -61,7 +92,7 @@ class StrooerVideoplayer {
           }
           if (ds.contentVideoEnded) {
             ds.contentVideoEnded = false
-            this.dispatchEvent(new Event('replay'))
+            this.dispatchEvent(new Event('contentVideoReplay'))
           }
         }
       })
@@ -107,7 +138,41 @@ class StrooerVideoplayer {
         }
       })
     }
+    this.initUI(_dataStore.defaultUIName)
     return this
+  }
+
+  getUIName = (): string | undefined => {
+    return this._dataStore.uiName
+  }
+
+  getUIEl = (): HTMLDivElement => {
+    return this._dataStore.uiEl
+  }
+
+  getRootEl = (): HTMLDivElement => {
+    return this._dataStore.rootEl
+  }
+
+  getVideoEl = (): HTMLVideoElement => {
+    return this._dataStore.videoEl
+  }
+
+  setNoContentVideo = (): void => {
+    this._dataStore.isContentVideo = false
+  }
+
+  setContentVideo = (): void => {
+    this._dataStore.isContentVideo = true
+  }
+
+  static setDefaultUIName = (uiName: string): boolean => {
+    _dataStore.defaultUIName = uiName
+    return true
+  }
+
+  static getDefaultUIName = (): string => {
+    return _dataStore.defaultUIName
   }
 
   static isLoggingEnabled = (): boolean => {
@@ -130,6 +195,66 @@ class StrooerVideoplayer {
   static enableLogging = (): void => {
     _dataStore.loggingEnabled = true
     window.localStorage.setItem('StroeerVideoplayerLoggingEnabled', '1')
+  }
+
+  static registerUI = (ui: IRegisteredUI): boolean => {
+    if (_registeredUIs.has(ui.uiName)) {
+      return false
+    } else {
+      _registeredUIs.set(ui.uiName, ui)
+      return true
+    }
+  }
+
+  initUI = (uiName: string): boolean => {
+    if (_registeredUIs.has(uiName)) {
+      const ui = _registeredUIs.get(uiName) as IRegisteredUI
+      this._dataStore.uiName = uiName
+      ui.init(this)
+      return true
+    } else {
+      return false
+    }
+  }
+
+  deinitUI = (uiName: string): boolean => {
+    if (_registeredUIs.has(uiName)) {
+      const ui = _registeredUIs.get(uiName) as IRegisteredUI
+      this._dataStore.uiName = undefined
+      ui.deinit(this)
+      return true
+    } else {
+      return false
+    }
+  }
+
+  static registerPlugin = (plugin: IRegisteredPlugin): boolean => {
+    if (_registeredPlugins.has(plugin.pluginName)) {
+      return false
+    } else {
+      _registeredPlugins.set(plugin.pluginName, plugin)
+      return true
+    }
+  }
+
+  initPlugin = (pluginName: string, opts?: any): boolean => {
+    if (_registeredPlugins.has(pluginName)) {
+      const plugin = _registeredPlugins.get(pluginName) as IRegisteredPlugin
+      plugin.init(this, opts)
+      return true
+    } else {
+      return false
+    }
+  }
+
+  deinitPlugin = (pluginName: string): boolean => {
+    if (_registeredPlugins.has(pluginName)) {
+      const plugin = _registeredPlugins.get(pluginName) as IRegisteredPlugin
+      plugin.deinit(this)
+      return true
+    } else {
+      return false
+    }
   }
 
   getDataStore = (): IStrooerVideoplayerDataStore => {
