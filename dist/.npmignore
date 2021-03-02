@@ -1,4 +1,9 @@
-!/stroeer-videoplayer.js
-!/stroeer-videoplayer.min.js
-!/stroeer-videoplayer.css
-!/stroeer-videoplayer.min.css
+!/StroeerVideoplayer.umd.js
+!/StroeerVideoplayer.umd.min.js
+!/StroeerVideoplayer.umd.js.map
+!/StroeerVideoplayer.css
+!/StroeerVideoplayer.css.map
+!/StroeerVideoplayer.min.css
+!/StroeerVideoplayer.esm.js
+!/StroeerVideoplayer.cjs.js
+!/types/StroeerVideoplayer.d.ts

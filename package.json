@@ -2,14 +2,17 @@
  "version": "0.0.2",
  "name": "@stroeer/stroeer-videoplayer",
  "description": "Ströer Videoplayer Framework",
- "main": "dist/StroeerVideoplayer.js",
+ "main": "dist/StroeerVideoplayer.cjs.js",
+ "module": "dist/StroeerVideoplayer.esm.js",
  "files": [
   "dist"
  ],
+ "types": "dist/types/StroeerVideoplayer.d.ts",
  "scripts": {
   "build": "npm-run-all build:*",
   "build:js": "rollup -c",
   "build:css": "sass src/StroeerVideoplayer.scss dist/StroeerVideoplayer.css",
+  "build:types": "rm -rf dist/types && npx tsc && mv dist/src dist/types",
   "watch": "npm-run-all watch:*",
   "watch:js": "rollup -c -w",
   "watch:css": "sass --watch src/StroeerVideoplayer.scss dist/StroeerVideoplayer.css",
@@ -28,7 +31,9 @@
   "@babel/cli": "^7.12.10",
   "@babel/core": "^7.12.10",
   "@babel/preset-typescript": "^7.12.7",
+  "@rollup/plugin-commonjs": "^17.1.0",
   "@rollup/plugin-json": "^4.1.0",
+  "@rollup/plugin-node-resolve": "^11.2.0",
   "@rollup/plugin-typescript": "^8.1.0",
   "@typescript-eslint/eslint-plugin": "4",
   "@typescript-eslint/parser": "^4.14.1",
