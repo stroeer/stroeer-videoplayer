@@ -1,8 +1,15 @@
-name: pull request
-on: pull_request
+name: checks
+on:
+  pull_request:
+
+  push:
+    branches:
+      - main
+
 
 jobs:
   check:
+    name: build/lint/test
     runs-on: ubuntu-20.04
 
     steps:
