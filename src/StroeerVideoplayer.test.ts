@@ -11,6 +11,14 @@ containerEl.appendChild(videoEl)
 
 const p1 = new StrooerVideoplayer(videoEl)
 
+const playStub = jest
+  .spyOn(window.HTMLMediaElement.prototype, 'play')
+  .mockImplementation()
+
+const loadStub = jest
+  .spyOn(window.HTMLMediaElement.prototype, 'load')
+  .mockImplementation()
+
 it('should return a dataStore for .getDataStore()', () => {
   expect(p1.getDataStore().videoEl).toBe(videoEl)
 })
@@ -256,4 +264,44 @@ it('should deinit the ivad Plugin', () => {
 it('should not deinit the foorbarbaz Plugin', () => {
   const retval = p1.deinitPlugin('foorbarbaz')
   expect(retval).toBe(false)
+})
+
+it('should play video', () => {
+  p1.play()
+  expect(playStub).toHaveBeenCalled()
+  playStub.mockRestore()
+})
+
+it('should load video', () => {
+  p1.load()
+  expect(loadStub).toHaveBeenCalled()
+  loadStub.mockRestore()
+})
+
+it('should set new source to HTML', () => {
+  const sourceArr = [
+    {
+      quality: '1080',
+      label: '1080p',
+      src: 'https://dlc2.t-online.de/s/2021/05/07/20027894-1080p.mp4',
+      type: 'video/mp4'
+    },
+    {
+      quality: '720',
+      label: '720p',
+      src: 'https://dlc2.t-online.de/s/2021/05/07/20027894-720p.mp4',
+      type: 'video/mp4'
+    },
+    {
+      quality: '240',
+      label: '240p',
+      src: 'https://dlc2.t-online.de/s/2021/05/07/20027894-240p.mp4',
+      type: 'video/mp4'
+    }
+  ]
+  p1.setSrc(sourceArr)
+  const videoSources = videoEl.getElementsByTagName('source')
+  for (let i = 0; i < videoSources.length; i++) {
+    expect(videoSources[i].src).toEqual(sourceArr[i].src)
+  }
 })

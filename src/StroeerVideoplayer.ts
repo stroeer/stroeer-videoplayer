@@ -15,6 +15,13 @@ interface IRegisteredUI {
   deinit: Function
 }
 
+interface IVideoSources {
+  src: string
+  type: string
+  quality: string
+  label: string
+}
+
 interface IRegisteredPlugin {
   pluginName: string
   init: Function
@@ -259,6 +266,31 @@ class StrooerVideoplayer {
 
   getDataStore = (): IStrooerVideoplayerDataStore => {
     return this._dataStore
+  }
+
+  play = (): void => {
+    const promise = this._dataStore.videoEl.play()
+    if (promise !== undefined) {
+      promise.then().catch(playPromiseEx => {
+        log('error')(
+          'StrooerVideoplayer',
+          'Handled Play Promise exception',
+          playPromiseEx
+        )
+      })
+    }
+  }
+
+  load = (): void => {
+    this._dataStore.videoEl.load()
+  }
+
+  setSrc = (sources: IVideoSources[]): void => {
+    this._dataStore.videoEl.innerHTML = ''
+    sources.forEach((video) => {
+      this._dataStore.videoEl.innerHTML += `<source src="${video.src}"
+        type="${video.type}" data-quality="${video.quality}" data-label="${video.type}">`
+    })
   }
 }
 
