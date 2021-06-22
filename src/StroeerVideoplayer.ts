@@ -326,10 +326,12 @@ class StrooerVideoplayer {
     this._dataStore.videoEl.dataset.meta = JSON.stringify(videoData)
   }
 
-  replaceAndPlay = (videoData: IVideoData): void => {
+  replaceAndPlay = (videoData: IVideoData, autoplay: boolean = false): void => {
+    this.setContentVideo()
     this.setSrc(videoData.sources)
     this.setPosterImage(videoData.poster)
     this.setEndcardUrl(videoData.endpoint)
+    this.setAutoplay(autoplay)
     this.setMetaData(videoData)
     this.load()
     this.play()
