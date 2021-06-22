@@ -337,14 +337,12 @@ it('should call correct functions in replaceAndPlay function', () => {
   p1.load = jest.fn()
   p1.play = jest.fn()
   p1.setEndcardUrl = jest.fn()
-  p1.setAutoplay = jest.fn()
 
   p1.replaceAndPlay(testVideoData)
 
   expect(p1.setSrc).toHaveBeenCalledTimes(1)
   expect(p1.setPosterImage).toHaveBeenCalledTimes(1)
   expect(p1.setEndcardUrl).toHaveBeenCalledTimes(1)
-  expect(p1.setAutoplay).toHaveBeenCalledTimes(1)
   expect(p1.setMetaData).toHaveBeenCalledTimes(1)
   expect(p1.load).toHaveBeenCalledTimes(1)
   expect(p1.play).toHaveBeenCalledTimes(1)

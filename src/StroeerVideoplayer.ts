@@ -330,7 +330,6 @@ class StrooerVideoplayer {
     this.setSrc(videoData.sources)
     this.setPosterImage(videoData.poster)
     this.setEndcardUrl(videoData.endpoint)
-    this.setAutoplay(false)
     this.setMetaData(videoData)
     this.load()
     this.play()
