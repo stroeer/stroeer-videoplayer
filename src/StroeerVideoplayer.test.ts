@@ -308,13 +308,13 @@ it('should set new source to HTML', () => {
   }
 })
 
-it('should should set and get poster image', () => {
+it('should set and get poster image', () => {
   p1.setPosterImage('www.example.de/image.jpg')
   const retval = p1.getPosterImage()
   expect(retval).toEqual('www.example.de/image.jpg')
 })
 
-it('should should set meta data', () => {
+it('should set meta data', () => {
   p1.setMetaData(testVideoData)
   expect(videoEl.dataset.meta).toEqual(JSON.stringify(testVideoData))
 })
