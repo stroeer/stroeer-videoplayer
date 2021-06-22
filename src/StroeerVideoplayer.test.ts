@@ -319,12 +319,6 @@ it('should set and get poster image', () => {
   expect(retval).toEqual('www.example.de/image.jpg')
 })
 
-it('should set and get endcard url', () => {
-  p1.setEndcardUrl('www.example.de')
-  const retval = p1.getEndcardUrl()
-  expect(retval).toEqual('www.example.de')
-})
-
 it('should set autoplay', () => {
   p1.setAutoplay(false)
   expect(videoEl.dataset.autoplay).toEqual('false')
@@ -341,7 +335,6 @@ it('should call correct functions in replaceAndPlay function', () => {
   p1.setMetaData = jest.fn()
   p1.load = jest.fn()
   p1.play = jest.fn()
-  p1.setEndcardUrl = jest.fn()
   p1.setAutoplay = jest.fn()
   p1.setContentVideo = jest.fn()
 
@@ -350,7 +343,6 @@ it('should call correct functions in replaceAndPlay function', () => {
   expect(p1.setContentVideo).toHaveBeenCalledTimes(1)
   expect(p1.setSrc).toHaveBeenCalledTimes(1)
   expect(p1.setPosterImage).toHaveBeenCalledTimes(1)
-  expect(p1.setEndcardUrl).toHaveBeenCalledTimes(1)
   expect(p1.setAutoplay).toHaveBeenCalledTimes(1)
   expect(p1.setMetaData).toHaveBeenCalledTimes(1)
   expect(p1.load).toHaveBeenCalledTimes(1)

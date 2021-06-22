@@ -18,7 +18,6 @@ interface IRegisteredUI {
 interface IVideoData {
   sources: IVideoSources[]
   poster: string
-  endpoint: string
   // add more if needed
 }
 
@@ -292,15 +291,6 @@ class StrooerVideoplayer {
     this._dataStore.videoEl.load()
   }
 
-  getEndcardUrl = (): string => {
-    const url = this._dataStore.videoEl.dataset.endcardUrl
-    return url !== undefined ? url : ''
-  }
-
-  setEndcardUrl = (url: string): void => {
-    this._dataStore.videoEl.dataset.endcardUrl = url
-  }
-
   setAutoplay = (autoplay: boolean): void => {
     this._dataStore.videoEl.dataset.autoplay = String(autoplay)
   }
@@ -330,7 +320,6 @@ class StrooerVideoplayer {
     this.setContentVideo()
     this.setSrc(videoData.sources)
     this.setPosterImage(videoData.poster)
-    this.setEndcardUrl(videoData.endpoint)
     this.setAutoplay(autoplay)
     this.setMetaData(videoData)
     this.load()
