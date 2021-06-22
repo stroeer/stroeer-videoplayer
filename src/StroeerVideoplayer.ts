@@ -15,6 +15,12 @@ interface IRegisteredUI {
   deinit: Function
 }
 
+interface IVideoData {
+  sources: IVideoSources[]
+  poster: string
+  // add more if needed
+}
+
 interface IVideoSources {
   src: string
   type: string
@@ -285,12 +291,33 @@ class StrooerVideoplayer {
     this._dataStore.videoEl.load()
   }
 
+  getPosterImage = (): string => {
+    const poster = this._dataStore.videoEl.getAttribute('poster')
+    return poster !== null ? poster : ''
+  }
+
+  setPosterImage = (url: string): void => {
+    this._dataStore.videoEl.setAttribute('poster', url)
+  }
+
   setSrc = (sources: IVideoSources[]): void => {
     this._dataStore.videoEl.innerHTML = ''
     sources.forEach((video) => {
       this._dataStore.videoEl.innerHTML += `<source src="${video.src}"
         type="${video.type}" data-quality="${video.quality}" data-label="${video.type}">`
     })
+  }
+
+  setMetaData = (videoData: IVideoData): void => {
+    this._dataStore.videoEl.dataset.meta = JSON.stringify(videoData)
+  }
+
+  replaceAndPlay = (videoData: IVideoData): void => {
+    this.setSrc(videoData.sources)
+    this.setPosterImage(videoData.poster)
+    this.setMetaData(videoData)
+    this.load()
+    this.play()
   }
 }
 
