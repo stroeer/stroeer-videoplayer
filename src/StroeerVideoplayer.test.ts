@@ -19,7 +19,7 @@ const loadStub = jest
   .spyOn(window.HTMLMediaElement.prototype, 'load')
   .mockImplementation()
 
-const testVideoData = { sources: [], poster: 'www.example.de/image.jpg' }
+const testVideoData = { sources: [], poster: 'www.example.de/image.jpg', endpoint: 'www.example.de' }
 
 it('should return a dataStore for .getDataStore()', () => {
   expect(p1.getDataStore().videoEl).toBe(videoEl)
@@ -312,6 +312,17 @@ it('should set and get poster image', () => {
   p1.setPosterImage('www.example.de/image.jpg')
   const retval = p1.getPosterImage()
   expect(retval).toEqual('www.example.de/image.jpg')
+})
+
+it('should set and get endcard url', () => {
+  p1.setEndcardUrl('www.example.de')
+  const retval = p1.getEndcardUrl()
+  expect(retval).toEqual('www.example.de')
+})
+
+it('should set autoplay', () => {
+  p1.setAutoplay(false)
+  expect(videoEl.dataset.autoplay).toEqual('false')
 })
 
 it('should set meta data', () => {
