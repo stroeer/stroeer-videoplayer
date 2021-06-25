@@ -19,6 +19,13 @@ const loadStub = jest
   .spyOn(window.HTMLMediaElement.prototype, 'load')
   .mockImplementation()
 
+const testVideoData = {
+  autoplay: true,
+  sources: [],
+  poster: 'www.example.de/image.jpg',
+  endpoint: 'www.example.de'
+}
+
 it('should return a dataStore for .getDataStore()', () => {
   expect(p1.getDataStore().videoEl).toBe(videoEl)
 })
@@ -304,4 +311,40 @@ it('should set new source to HTML', () => {
   for (let i = 0; i < videoSources.length; i++) {
     expect(videoSources[i].src).toEqual(sourceArr[i].src)
   }
+})
+
+it('should set and get poster image', () => {
+  p1.setPosterImage('www.example.de/image.jpg')
+  const retval = p1.getPosterImage()
+  expect(retval).toEqual('www.example.de/image.jpg')
+})
+
+it('should set autoplay', () => {
+  p1.setAutoplay(false)
+  expect(videoEl.dataset.autoplay).toEqual('false')
+})
+
+it('should set meta data', () => {
+  p1.setMetaData(testVideoData)
+  expect(videoEl.dataset.meta).toEqual(JSON.stringify(testVideoData))
+})
+
+it('should call correct functions in replaceAndPlay function', () => {
+  p1.setSrc = jest.fn()
+  p1.setPosterImage = jest.fn()
+  p1.setMetaData = jest.fn()
+  p1.load = jest.fn()
+  p1.play = jest.fn()
+  p1.setAutoplay = jest.fn()
+  p1.setContentVideo = jest.fn()
+
+  p1.replaceAndPlay(testVideoData, true)
+
+  expect(p1.setContentVideo).toHaveBeenCalledTimes(1)
+  expect(p1.setSrc).toHaveBeenCalledTimes(1)
+  expect(p1.setPosterImage).toHaveBeenCalledTimes(1)
+  expect(p1.setAutoplay).toHaveBeenCalledTimes(1)
+  expect(p1.setMetaData).toHaveBeenCalledTimes(1)
+  expect(p1.load).toHaveBeenCalledTimes(1)
+  expect(p1.play).toHaveBeenCalledTimes(1)
 })
