@@ -2,6 +2,7 @@ import convertLocalStorageIntegerToBoolean from './utils/convertLocalStorageInte
 import log from './log'
 import noop from './noop'
 import { version } from '../package.json'
+import HlsJs from 'hls.js'
 
 interface IDataStore {
   loggingEnabled: boolean
@@ -48,6 +49,8 @@ interface IStrooerVideoplayerDataStore {
   contentVideoThirdQuartile: boolean
   isContentVideo: boolean
   uiName: string | undefined
+  hls: null | HlsJs
+  hlsConfig: Object
 }
 
 const _dataStore: IDataStore = {
@@ -63,7 +66,7 @@ class StrooerVideoplayer {
   _dataStore: IStrooerVideoplayerDataStore
   version: string
 
-  constructor (videoEl: HTMLVideoElement) {
+  constructor (videoEl: HTMLVideoElement, hlsConfig: Object) {
     this._dataStore = {
       isInitialized: false,
       isPaused: false,
@@ -77,7 +80,9 @@ class StrooerVideoplayer {
       contentVideoMidpoint: false,
       contentVideoThirdQuartile: false,
       isContentVideo: true,
-      uiName: _dataStore.defaultUIName
+      uiName: _dataStore.defaultUIName,
+      hls: null,
+      hlsConfig: hlsConfig
     }
     this.version = version
 
@@ -289,6 +294,47 @@ class StrooerVideoplayer {
 
   load = (): void => {
     this._dataStore.videoEl.load()
+  }
+
+  loadStreamSource = (): void => {
+    const videoEl = this._dataStore.videoEl
+    const videoSource = videoEl.querySelector('source')
+
+    if (videoSource === null) return
+
+    if (videoEl.canPlayType('application/vnd.apple.mpegurl') !== '') {
+      // native support here
+    } else if (HlsJs.isSupported()) {
+      if (this._dataStore.hls !== null) {
+        this._dataStore.hls.destroy()
+        this._dataStore.hls = null
+      }
+      const hls = new HlsJs(this._dataStore.hlsConfig)
+      this._dataStore.hls = hls
+      hls.loadSource(videoSource.src)
+      hls.attachMedia(videoEl)
+
+      hls.on(HlsJs.Events.ERROR, (event, data) => {
+        console.log(event, data)
+        if (data.fatal) {
+          switch (data.type) {
+            case HlsJs.ErrorTypes.NETWORK_ERROR:
+              // try to recover network error
+              console.log('fatal network error encountered, try to recover')
+              hls.startLoad()
+              break
+            case HlsJs.ErrorTypes.MEDIA_ERROR:
+              console.log('fatal media error encountered, try to recover')
+              hls.recoverMediaError()
+              break
+            default:
+              // cannot recover
+              hls.destroy()
+              break
+          }
+        }
+      })
+    }
   }
 
   setAutoplay = (autoplay: boolean): void => {
