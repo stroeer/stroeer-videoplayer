@@ -3,6 +3,7 @@ import log from './log'
 import noop from './noop'
 import { version } from '../package.json'
 import HlsJs from 'hls.js'
+import { getRandomItem } from './helper'
 
 interface IDataStore {
   loggingEnabled: boolean
@@ -17,16 +18,9 @@ interface IRegisteredUI {
 }
 
 interface IVideoData {
-  sources: IVideoSources[]
+  playlists: string[]
   poster: string
   // add more if needed
-}
-
-interface IVideoSources {
-  src: string
-  type: string
-  quality: string
-  label: string
 }
 
 interface IRegisteredPlugin {
@@ -102,6 +96,9 @@ class StrooerVideoplayer {
         if (ds.videoFirstPlay) {
           ds.videoFirstPlay = false
           this.dispatchEvent(new Event('firstPlay'))
+          if (HlsJs.isSupported() && ds.hls !== null) {
+            ds.hls.startLoad()
+          }
         }
         if (ds.isContentVideo) {
           if (ds.isPaused) {
@@ -292,8 +289,15 @@ class StrooerVideoplayer {
     }
   }
 
-  load = (): void => {
-    this._dataStore.videoEl.load()
+  loadFirstChunk = (): void => {
+    const hls = this._dataStore.hls
+    if (hls === null) return
+
+    const onLevelLoaded = (): void => {
+      hls.off(HlsJs.Events.LEVEL_LOADED, onLevelLoaded)
+      hls.stopLoad()
+    }
+    hls.on(HlsJs.Events.LEVEL_LOADED, onLevelLoaded)
   }
 
   loadStreamSource = (): void => {
@@ -313,6 +317,7 @@ class StrooerVideoplayer {
       this._dataStore.hls = hls
       hls.loadSource(videoSource.src)
       hls.attachMedia(videoEl)
+      this.loadFirstChunk()
 
       hls.on(HlsJs.Events.ERROR, (event, data) => {
         console.log(event, data)
@@ -350,12 +355,9 @@ class StrooerVideoplayer {
     this._dataStore.videoEl.setAttribute('poster', url)
   }
 
-  setSrc = (sources: IVideoSources[]): void => {
+  setSrc = (playlist: string): void => {
     this._dataStore.videoEl.innerHTML = ''
-    sources.forEach((video) => {
-      this._dataStore.videoEl.innerHTML += `<source src="${video.src}"
-        type="${video.type}" data-quality="${video.quality}" data-label="${video.type}">`
-    })
+    this._dataStore.videoEl.innerHTML += `<source src="${playlist}" type="application/x-mpegURL">`
   }
 
   setMetaData = (videoData: IVideoData): void => {
@@ -364,11 +366,11 @@ class StrooerVideoplayer {
 
   replaceAndPlay = (videoData: IVideoData, autoplay: boolean = false): void => {
     this.setContentVideo()
-    this.setSrc(videoData.sources)
+    this.setSrc(getRandomItem(videoData.playlists))
     this.setPosterImage(videoData.poster)
     this.setAutoplay(autoplay)
     this.setMetaData(videoData)
-    this.load()
+    this.loadStreamSource()
     this.play()
   }
 }
