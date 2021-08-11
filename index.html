@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Endcard Plugin</title>
+		
+		<style>
+			html, body {
+				font-family: Roboto, sans-serif;
+				background-color: black;
+			}
+			
+			video {
+				max-width: 100%;
+				width: 100%;
+			}
+			
+			.container {
+				margin: 0 auto;
+				max-width: 650px;
+			}
+			
+			.stroeer-videoplayer-ui {
+				display: none !important;
+			}
+			
+			.hidden {
+				display: none !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<video id="myvideo" class="stroeervideoplayer" data-meta='{"id":255559724,"title":"4 Tipps, mit denen du beim Amazon Prime Day richtig sparen kannst","duration":188,"producer":"origin:self","uploaded":"2019-07-12T13:02:07.000Z"}'
+				preload="metadata" poster="https://videos.giga.de/files/1307753225/720p.jpg" controls playsinline data-endcard-url="http://localhost:5000/">
+				<source src="https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-1080p.mp4" type="video/mp4" data-label="1080p" />
+				<source src="https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-720p.mp4" type="video/mp4" data-label="720p" />
+				<source src="https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-240p.mp4" type="video/mp4" data-label="240p" />
+			</video>
+		</div>
+
+		<hr />
+		<script src="dist/StroeerVideoplayer.umd.js"></script>
+		<link rel="stylesheet" href="dist/StroeerVideoplayer.css" />
+
+		<script>
+			const video = document.getElementById("myvideo");
+			
+			video.addEventListener('error', function() {
+				console.log('error', this.error.code, this.error.message)
+			})
+			video.addEventListener('firstPlay', function() {
+				console.log('firstPlay')
+			})
+			video.addEventListener('contentVideoSeeked', function() {
+				console.log('contentVideoSeeked')
+			})
+			video.addEventListener('contentVideoPause', function() {
+				console.log('contentVideoPause')
+			})
+			video.addEventListener('contentVideoResume', function() {
+				console.log('contentVideoResume')
+			})
+			video.addEventListener('replay', function() {
+				console.log('replay')
+			})
+			video.addEventListener('contentVideoStart', function() {
+				console.log('contentVideoStart') 
+			})
+			video.addEventListener('contentVideoEnded', function() {
+				console.log('contentVideoEnded')
+			})
+			video.addEventListener('contentVideoFirstQuartile', function() {
+				console.log('contentVideoFirstQuartile')
+			})
+			video.addEventListener('contentVideoMidpoint', function() {
+				console.log('contentVideoMidpoint')
+			})
+			video.addEventListener('contentVideoThirdQuartile', function() {
+				console.log('contentVideoThirdQuartile')
+			})
+
+			const myvideoplayer = new StroeerVideoplayer(video)
+			console.log(myvideoplayer);
+		</script>
+		
+	</body>
+</html>
