@@ -9,19 +9,19 @@ source1.type = 'video/mp4'
 source1.src = 'https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-240p.mp4'
 containerEl.appendChild(videoEl)
 
-const p1 = new StrooerVideoplayer(videoEl)
+const p1 = new StrooerVideoplayer(videoEl, {})
 
 const playStub = jest
   .spyOn(window.HTMLMediaElement.prototype, 'play')
   .mockImplementation()
 
-const loadStub = jest
-  .spyOn(window.HTMLMediaElement.prototype, 'load')
-  .mockImplementation()
-
 const testVideoData = {
   autoplay: true,
-  sources: [],
+  playlists: [
+    'https://lx54.spieletips.de/977412104/playlist.m3u8',
+    'https://lx56.spieletips.de/977412104/playlist.m3u8',
+    'https://lx57.spieletips.de/977412104/playlist.m3u8'
+  ],
   poster: 'www.example.de/image.jpg',
   endpoint: 'www.example.de'
 }
@@ -279,38 +279,11 @@ it('should play video', () => {
   playStub.mockRestore()
 })
 
-it('should load video', () => {
-  p1.load()
-  expect(loadStub).toHaveBeenCalled()
-  loadStub.mockRestore()
-})
-
 it('should set new source to HTML', () => {
-  const sourceArr = [
-    {
-      quality: '1080',
-      label: '1080p',
-      src: 'https://dlc2.t-online.de/s/2021/05/07/20027894-1080p.mp4',
-      type: 'video/mp4'
-    },
-    {
-      quality: '720',
-      label: '720p',
-      src: 'https://dlc2.t-online.de/s/2021/05/07/20027894-720p.mp4',
-      type: 'video/mp4'
-    },
-    {
-      quality: '240',
-      label: '240p',
-      src: 'https://dlc2.t-online.de/s/2021/05/07/20027894-240p.mp4',
-      type: 'video/mp4'
-    }
-  ]
-  p1.setSrc(sourceArr)
+  const src = 'https://lx57.spieletips.de/977412104/playlist.m3u8'
+  p1.setSrc(src)
   const videoSources = videoEl.getElementsByTagName('source')
-  for (let i = 0; i < videoSources.length; i++) {
-    expect(videoSources[i].src).toEqual(sourceArr[i].src)
-  }
+  expect(videoSources[0].src).toEqual(src)
 })
 
 it('should set and get poster image', () => {
@@ -333,7 +306,6 @@ it('should call correct functions in replaceAndPlay function', () => {
   p1.setSrc = jest.fn()
   p1.setPosterImage = jest.fn()
   p1.setMetaData = jest.fn()
-  p1.load = jest.fn()
   p1.play = jest.fn()
   p1.setAutoplay = jest.fn()
   p1.setContentVideo = jest.fn()
@@ -345,6 +317,5 @@ it('should call correct functions in replaceAndPlay function', () => {
   expect(p1.setPosterImage).toHaveBeenCalledTimes(1)
   expect(p1.setAutoplay).toHaveBeenCalledTimes(1)
   expect(p1.setMetaData).toHaveBeenCalledTimes(1)
-  expect(p1.load).toHaveBeenCalledTimes(1)
   expect(p1.play).toHaveBeenCalledTimes(1)
 })

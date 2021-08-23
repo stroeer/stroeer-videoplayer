@@ -18,8 +18,8 @@ interface IRegisteredUI {
 }
 
 interface IVideoData {
-  playlists: string[]
-  poster: string
+  playlists?: string[]
+  poster?: string
   // add more if needed
 }
 
@@ -76,7 +76,12 @@ class StrooerVideoplayer {
       isContentVideo: true,
       uiName: _dataStore.defaultUIName,
       hls: null,
-      hlsConfig: hlsConfig
+      hlsConfig: {
+        maxBufferSize: 0,
+        maxBufferLength: 10,
+        capLevelToPlayerSize: true,
+        ...hlsConfig
+      }
     }
     this.version = version
 
@@ -303,12 +308,12 @@ class StrooerVideoplayer {
   loadStreamSource = (): void => {
     const videoEl = this._dataStore.videoEl
     const videoSource = videoEl.querySelector('source')
+    const canPlayNativeHls = videoEl.canPlayType('application/vnd.apple.mpegurl') === 'probably' ||
+      videoEl.canPlayType('application/vnd.apple.mpegurl') === 'maybe'
 
     if (videoSource === null) return
 
-    if (videoEl.canPlayType('application/vnd.apple.mpegurl') !== '') {
-      // native support here
-    } else if (HlsJs.isSupported()) {
+    if (!canPlayNativeHls && HlsJs.isSupported()) {
       if (this._dataStore.hls !== null) {
         this._dataStore.hls.destroy()
         this._dataStore.hls = null
@@ -365,9 +370,13 @@ class StrooerVideoplayer {
   }
 
   replaceAndPlay = (videoData: IVideoData, autoplay: boolean = false): void => {
+    if (videoData.playlists === undefined) return
+
     this.setContentVideo()
     this.setSrc(getRandomItem(videoData.playlists))
-    this.setPosterImage(videoData.poster)
+    if (videoData.poster !== undefined) {
+      this.setPosterImage(videoData.poster)
+    }
     this.setAutoplay(autoplay)
     this.setMetaData(videoData)
     this.loadStreamSource()
