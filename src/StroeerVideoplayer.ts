@@ -60,7 +60,7 @@ class StrooerVideoplayer {
   _dataStore: IStrooerVideoplayerDataStore
   version: string
 
-  constructor (videoEl: HTMLVideoElement, hlsConfig: Object) {
+  constructor (videoEl: HTMLVideoElement, hlsConfig: Object = {}) {
     this._dataStore = {
       isInitialized: false,
       isPaused: false,
@@ -281,6 +281,10 @@ class StrooerVideoplayer {
     return this._dataStore
   }
 
+  getHlsJs = (): typeof HlsJs => {
+    return HlsJs
+  }
+
   play = (): void => {
     const promise = this._dataStore.videoEl.play()
     if (promise !== undefined) {
@@ -322,7 +326,6 @@ class StrooerVideoplayer {
       this._dataStore.hls = hls
       hls.loadSource(videoSource.src)
       hls.attachMedia(videoEl)
-      this.loadFirstChunk()
 
       hls.on(HlsJs.Events.ERROR, (event, data) => {
         console.log(event, data)
@@ -361,8 +364,7 @@ class StrooerVideoplayer {
   }
 
   setSrc = (playlist: string): void => {
-    this._dataStore.videoEl.innerHTML = ''
-    this._dataStore.videoEl.innerHTML += `<source src="${playlist}" type="application/x-mpegURL">`
+    this._dataStore.videoEl.innerHTML = `<source src="${playlist}" type="application/x-mpegURL">`
   }
 
   setMetaData = (videoData: IVideoData): void => {

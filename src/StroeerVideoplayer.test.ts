@@ -9,7 +9,7 @@ source1.type = 'video/mp4'
 source1.src = 'https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-240p.mp4'
 containerEl.appendChild(videoEl)
 
-const p1 = new StrooerVideoplayer(videoEl, {})
+const p1 = new StrooerVideoplayer(videoEl)
 
 const playStub = jest
   .spyOn(window.HTMLMediaElement.prototype, 'play')
