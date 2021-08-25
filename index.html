@@ -32,11 +32,8 @@
 	</head>
 	<body>
 		<div class="container">
-			<video id="myvideo" class="stroeervideoplayer" data-meta='{"id":255559724,"title":"4 Tipps, mit denen du beim Amazon Prime Day richtig sparen kannst","duration":188,"producer":"origin:self","uploaded":"2019-07-12T13:02:07.000Z"}'
-				preload="metadata" poster="https://videos.giga.de/files/1307753225/720p.jpg" controls playsinline data-endcard-url="http://localhost:5000/">
-				<source src="https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-1080p.mp4" type="video/mp4" data-label="1080p" />
-				<source src="https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-720p.mp4" type="video/mp4" data-label="720p" />
-				<source src="https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-240p.mp4" type="video/mp4" data-label="240p" />
+			<video id="myvideo" class="stroeervideoplayer" preload="metadata" poster="https://videos.giga.de/files/1307753225/720p.jpg" controls playsinline>
+					<source src="https://vid-cdn60.stroeermb.de/787303133_v4/playlist.m3u8" type="application/x-mpegURL">
 			</video>
 		</div>
 
@@ -82,6 +79,8 @@
 			})
 
 			const myvideoplayer = new StroeerVideoplayer(video)
+			myvideoplayer.loadStreamSource()
+			myvideoplayer.loadFirstChunk()
 			console.log(myvideoplayer);
 		</script>
 		

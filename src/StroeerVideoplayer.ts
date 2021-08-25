@@ -2,6 +2,8 @@ import convertLocalStorageIntegerToBoolean from './utils/convertLocalStorageInte
 import log from './log'
 import noop from './noop'
 import { version } from '../package.json'
+import HlsJs from 'hls.js'
+import { getRandomItem } from './helper'
 
 interface IDataStore {
   loggingEnabled: boolean
@@ -16,16 +18,9 @@ interface IRegisteredUI {
 }
 
 interface IVideoData {
-  sources: IVideoSources[]
-  poster: string
+  playlists?: string[]
+  poster?: string
   // add more if needed
-}
-
-interface IVideoSources {
-  src: string
-  type: string
-  quality: string
-  label: string
 }
 
 interface IRegisteredPlugin {
@@ -48,6 +43,8 @@ interface IStrooerVideoplayerDataStore {
   contentVideoThirdQuartile: boolean
   isContentVideo: boolean
   uiName: string | undefined
+  hls: null | HlsJs
+  hlsConfig: Object
 }
 
 const _dataStore: IDataStore = {
@@ -63,7 +60,7 @@ class StrooerVideoplayer {
   _dataStore: IStrooerVideoplayerDataStore
   version: string
 
-  constructor (videoEl: HTMLVideoElement) {
+  constructor (videoEl: HTMLVideoElement, hlsConfig: Object = {}) {
     this._dataStore = {
       isInitialized: false,
       isPaused: false,
@@ -77,7 +74,14 @@ class StrooerVideoplayer {
       contentVideoMidpoint: false,
       contentVideoThirdQuartile: false,
       isContentVideo: true,
-      uiName: _dataStore.defaultUIName
+      uiName: _dataStore.defaultUIName,
+      hls: null,
+      hlsConfig: {
+        maxBufferSize: 0,
+        maxBufferLength: 10,
+        capLevelToPlayerSize: true,
+        ...hlsConfig
+      }
     }
     this.version = version
 
@@ -97,6 +101,9 @@ class StrooerVideoplayer {
         if (ds.videoFirstPlay) {
           ds.videoFirstPlay = false
           this.dispatchEvent(new Event('firstPlay'))
+          if (HlsJs.isSupported() && ds.hls !== null) {
+            ds.hls.startLoad()
+          }
         }
         if (ds.isContentVideo) {
           if (ds.isPaused) {
@@ -274,6 +281,10 @@ class StrooerVideoplayer {
     return this._dataStore
   }
 
+  getHlsJs = (): typeof HlsJs => {
+    return HlsJs
+  }
+
   play = (): void => {
     const promise = this._dataStore.videoEl.play()
     if (promise !== undefined) {
@@ -287,8 +298,56 @@ class StrooerVideoplayer {
     }
   }
 
-  load = (): void => {
-    this._dataStore.videoEl.load()
+  loadFirstChunk = (): void => {
+    const hls = this._dataStore.hls
+    if (hls === null) return
+
+    const onLevelLoaded = (): void => {
+      hls.off(HlsJs.Events.LEVEL_LOADED, onLevelLoaded)
+      hls.stopLoad()
+    }
+    hls.on(HlsJs.Events.LEVEL_LOADED, onLevelLoaded)
+  }
+
+  loadStreamSource = (): void => {
+    const videoEl = this._dataStore.videoEl
+    const videoSource = videoEl.querySelector('source')
+    const canPlayNativeHls = videoEl.canPlayType('application/vnd.apple.mpegurl') === 'probably' ||
+      videoEl.canPlayType('application/vnd.apple.mpegurl') === 'maybe'
+
+    if (videoSource === null) return
+
+    if (!canPlayNativeHls && HlsJs.isSupported()) {
+      if (this._dataStore.hls !== null) {
+        this._dataStore.hls.destroy()
+        this._dataStore.hls = null
+      }
+      const hls = new HlsJs(this._dataStore.hlsConfig)
+      this._dataStore.hls = hls
+      hls.loadSource(videoSource.src)
+      hls.attachMedia(videoEl)
+
+      hls.on(HlsJs.Events.ERROR, (event, data) => {
+        console.log(event, data)
+        if (data.fatal) {
+          switch (data.type) {
+            case HlsJs.ErrorTypes.NETWORK_ERROR:
+              // try to recover network error
+              console.log('fatal network error encountered, try to recover')
+              hls.startLoad()
+              break
+            case HlsJs.ErrorTypes.MEDIA_ERROR:
+              console.log('fatal media error encountered, try to recover')
+              hls.recoverMediaError()
+              break
+            default:
+              // cannot recover
+              hls.destroy()
+              break
+          }
+        }
+      })
+    }
   }
 
   setAutoplay = (autoplay: boolean): void => {
@@ -304,12 +363,8 @@ class StrooerVideoplayer {
     this._dataStore.videoEl.setAttribute('poster', url)
   }
 
-  setSrc = (sources: IVideoSources[]): void => {
-    this._dataStore.videoEl.innerHTML = ''
-    sources.forEach((video) => {
-      this._dataStore.videoEl.innerHTML += `<source src="${video.src}"
-        type="${video.type}" data-quality="${video.quality}" data-label="${video.type}">`
-    })
+  setSrc = (playlist: string): void => {
+    this._dataStore.videoEl.innerHTML = `<source src="${playlist}" type="application/x-mpegURL">`
   }
 
   setMetaData = (videoData: IVideoData): void => {
@@ -317,12 +372,16 @@ class StrooerVideoplayer {
   }
 
   replaceAndPlay = (videoData: IVideoData, autoplay: boolean = false): void => {
+    if (videoData.playlists === undefined) return
+
     this.setContentVideo()
-    this.setSrc(videoData.sources)
-    this.setPosterImage(videoData.poster)
+    this.setSrc(getRandomItem(videoData.playlists))
+    if (videoData.poster !== undefined) {
+      this.setPosterImage(videoData.poster)
+    }
     this.setAutoplay(autoplay)
     this.setMetaData(videoData)
-    this.load()
+    this.loadStreamSource()
     this.play()
   }
 }
