@@ -281,6 +281,10 @@ class StrooerVideoplayer {
     return this._dataStore
   }
 
+  getHls = (): HlsJs | null => {
+    return this._dataStore.hls
+  }
+
   getHlsJs = (): typeof HlsJs => {
     return HlsJs
   }
@@ -327,9 +331,9 @@ class StrooerVideoplayer {
       hls.loadSource(videoSource.src)
       hls.attachMedia(videoEl)
 
-      hls.on(HlsJs.Events.ERROR, (event, data) => {
+      hls.on(HlsJs.Events.ERROR, (event: any, data: any) => {
         console.log(event, data)
-        if (data.fatal) {
+        if (data.fatal !== undefined) {
           switch (data.type) {
             case HlsJs.ErrorTypes.NETWORK_ERROR:
               // try to recover network error
