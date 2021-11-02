@@ -327,6 +327,10 @@ class StrooerVideoplayer {
         this._dataStore.hls = null
       }
       const hls = new HlsJs(this._dataStore.hlsConfig)
+      hls.on(HlsJs.Events.LEVEL_SWITCHED, (event: any, data: any) => {
+        const level = hls.levels[data.level]
+        videoEl.dispatchEvent(new CustomEvent('hlsLevelSwitched', { detail: level }))
+      })
       this._dataStore.hls = hls
       hls.loadSource(videoSource.src)
       hls.attachMedia(videoEl)
