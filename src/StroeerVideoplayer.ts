@@ -29,11 +29,12 @@ interface IRegisteredPlugin {
   deinit: Function
 }
 
-interface IStrooerVideoplayerDataStore {
+interface IStroeerVideoplayerDataStore {
   isInitialized: boolean
   isPaused: boolean
   videoEl: HTMLVideoElement
   rootEl: HTMLDivElement
+  containmentEl: HTMLDivElement
   uiEl: HTMLDivElement
   videoFirstPlay: boolean
   contentVideoStarted: boolean
@@ -56,8 +57,8 @@ const _dataStore: IDataStore = {
 const _registeredUIs = new Map()
 const _registeredPlugins = new Map()
 
-class StrooerVideoplayer {
-  _dataStore: IStrooerVideoplayerDataStore
+class StroeerVideoplayer {
+  _dataStore: IStroeerVideoplayerDataStore
   version: string
 
   constructor (videoEl: HTMLVideoElement, hlsConfig: Object = {}) {
@@ -66,6 +67,7 @@ class StrooerVideoplayer {
       isPaused: false,
       videoEl: videoEl,
       rootEl: document.createElement('div'),
+      containmentEl: document.createElement('div'),
       uiEl: document.createElement('div'),
       videoFirstPlay: true,
       contentVideoStarted: false,
@@ -87,16 +89,19 @@ class StrooerVideoplayer {
 
     const ds = this._dataStore
 
-    if (ds.videoEl.parentNode !== null) {
-      ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
-      ds.rootEl.appendChild(ds.uiEl)
-      ds.rootEl.appendChild(ds.videoEl)
-      ds.rootEl.className = 'stroeer-videoplayer'
-      ds.uiEl.className = 'stroeer-videoplayer-ui'
-    }
-
     if (videoEl.getAttribute('data-stroeervp-initialized') === null) {
       videoEl.setAttribute('data-stroeervp-initialized', '1')
+
+      if (ds.videoEl.parentNode !== null) {
+        ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
+        ds.containmentEl.appendChild(ds.uiEl)
+        ds.containmentEl.appendChild(ds.videoEl)
+        ds.rootEl.appendChild(ds.containmentEl)
+        ds.rootEl.className = 'stroeer-videoplayer'
+        ds.containmentEl.className = 'stroeer-videoplayer-containment'
+        ds.uiEl.className = 'stroeer-videoplayer-ui'
+      }
+
       videoEl.addEventListener('play', function () {
         if (ds.videoFirstPlay) {
           ds.videoFirstPlay = false
@@ -200,7 +205,7 @@ class StrooerVideoplayer {
   }
 
   static log = (type?: string): any => {
-    if (StrooerVideoplayer.isLoggingEnabled()) {
+    if (StroeerVideoplayer.isLoggingEnabled()) {
       return log(type)
     } else {
       return noop
@@ -277,7 +282,7 @@ class StrooerVideoplayer {
     }
   }
 
-  getDataStore = (): IStrooerVideoplayerDataStore => {
+  getDataStore = (): IStroeerVideoplayerDataStore => {
     return this._dataStore
   }
 
@@ -294,7 +299,7 @@ class StrooerVideoplayer {
     if (promise !== undefined) {
       promise.then().catch(playPromiseEx => {
         log('error')(
-          'StrooerVideoplayer',
+          'StroeerVideoplayer',
           'Handled Play Promise exception',
           playPromiseEx
         )
@@ -394,4 +399,4 @@ class StrooerVideoplayer {
   }
 }
 
-export default StrooerVideoplayer
+export default StroeerVideoplayer
