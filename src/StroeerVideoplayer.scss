@@ -9,6 +9,13 @@
 	align-items: center;
 	max-width: 100%;
 
+	.stroeer-videoplayer-containment {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		height: 100%;
+	}
+
 	.stroeer-videoplayer-ui {
 		position: absolute;
 		z-index: 100;

@@ -34,6 +34,7 @@ interface IStrooerVideoplayerDataStore {
   isPaused: boolean
   videoEl: HTMLVideoElement
   rootEl: HTMLDivElement
+  containmentEl: HTMLDivElement
   uiEl: HTMLDivElement
   videoFirstPlay: boolean
   contentVideoStarted: boolean
@@ -66,6 +67,7 @@ class StroeerVideoplayer {
       isPaused: false,
       videoEl: videoEl,
       rootEl: document.createElement('div'),
+      containmentEl: document.createElement('div'),
       uiEl: document.createElement('div'),
       videoFirstPlay: true,
       contentVideoStarted: false,
@@ -87,16 +89,19 @@ class StroeerVideoplayer {
 
     const ds = this._dataStore
 
-    if (ds.videoEl.parentNode !== null) {
-      ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
-      ds.rootEl.appendChild(ds.uiEl)
-      ds.rootEl.appendChild(ds.videoEl)
-      ds.rootEl.className = 'stroeer-videoplayer'
-      ds.uiEl.className = 'stroeer-videoplayer-ui'
-    }
-
     if (videoEl.getAttribute('data-stroeervp-initialized') === null) {
       videoEl.setAttribute('data-stroeervp-initialized', '1')
+
+      if (ds.videoEl.parentNode !== null) {
+        ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
+        ds.containmentEl.appendChild(ds.uiEl)
+        ds.containmentEl.appendChild(ds.videoEl)
+        ds.rootEl.appendChild(ds.containmentEl)
+        ds.rootEl.className = 'stroeer-videoplayer'
+        ds.containmentEl.className = 'stroeer-videoplayer-containment'
+        ds.uiEl.className = 'stroeer-videoplayer-ui'
+      }
+
       videoEl.addEventListener('play', function () {
         if (ds.videoFirstPlay) {
           ds.videoFirstPlay = false
@@ -200,7 +205,7 @@ class StroeerVideoplayer {
   }
 
   static log = (type?: string): any => {
-    if (StrooerVideoplayer.isLoggingEnabled() === true) {
+    if (StroeerVideoplayer.isLoggingEnabled() === true) {
       return log(type)
     } else {
       return noop
