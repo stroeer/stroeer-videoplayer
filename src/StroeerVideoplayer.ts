@@ -200,7 +200,7 @@ class StroeerVideoplayer {
   }
 
   static log = (type?: string): any => {
-    if (StrooerVideoplayer.isLoggingEnabled()) {
+    if (StrooerVideoplayer.isLoggingEnabled() === true) {
       return log(type)
     } else {
       return noop
