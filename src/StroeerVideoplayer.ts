@@ -56,7 +56,7 @@ const _dataStore: IDataStore = {
 const _registeredUIs = new Map()
 const _registeredPlugins = new Map()
 
-class StrooerVideoplayer {
+class StroeerVideoplayer {
   _dataStore: IStrooerVideoplayerDataStore
   version: string
 
@@ -394,4 +394,4 @@ class StrooerVideoplayer {
   }
 }
 
-export default StrooerVideoplayer
+export default StroeerVideoplayer
