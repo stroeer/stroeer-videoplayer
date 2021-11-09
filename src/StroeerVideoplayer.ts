@@ -29,7 +29,7 @@ interface IRegisteredPlugin {
   deinit: Function
 }
 
-interface IStrooerVideoplayerDataStore {
+interface IStroeerVideoplayerDataStore {
   isInitialized: boolean
   isPaused: boolean
   videoEl: HTMLVideoElement
@@ -58,7 +58,7 @@ const _registeredUIs = new Map()
 const _registeredPlugins = new Map()
 
 class StroeerVideoplayer {
-  _dataStore: IStrooerVideoplayerDataStore
+  _dataStore: IStroeerVideoplayerDataStore
   version: string
 
   constructor (videoEl: HTMLVideoElement, hlsConfig: Object = {}) {
@@ -282,7 +282,7 @@ class StroeerVideoplayer {
     }
   }
 
-  getDataStore = (): IStrooerVideoplayerDataStore => {
+  getDataStore = (): IStroeerVideoplayerDataStore => {
     return this._dataStore
   }
 
@@ -299,7 +299,7 @@ class StroeerVideoplayer {
     if (promise !== undefined) {
       promise.then().catch(playPromiseEx => {
         log('error')(
-          'StrooerVideoplayer',
+          'StroeerVideoplayer',
           'Handled Play Promise exception',
           playPromiseEx
         )
