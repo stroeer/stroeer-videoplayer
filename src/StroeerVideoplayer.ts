@@ -49,7 +49,7 @@ interface IStroeerVideoplayerDataStore {
 }
 
 interface StroeerVideoplayerVideoElement extends HTMLVideoElement {
-  getSVP: () => StroeerVideoplayer
+  getSVP?: () => StroeerVideoplayer
 }
 
 const _dataStore: IDataStore = {
