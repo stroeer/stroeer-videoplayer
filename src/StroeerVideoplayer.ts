@@ -48,6 +48,10 @@ interface IStroeerVideoplayerDataStore {
   hlsConfig: Object
 }
 
+interface StroeerVideoplayerVideoElement extends HTMLVideoElement {
+  getSVP: () => StroeerVideoplayer
+}
+
 const _dataStore: IDataStore = {
   defaultUIName: 'default',
   loggingEnabled: convertLocalStorageIntegerToBoolean('StroeerVideoplayerLoggingEnabled'),
@@ -61,7 +65,7 @@ class StroeerVideoplayer {
   _dataStore: IStroeerVideoplayerDataStore
   version: string
 
-  constructor (videoEl: HTMLVideoElement, hlsConfig: Object = {}) {
+  constructor (videoEl: StroeerVideoplayerVideoElement, hlsConfig: Object = {}) {
     this._dataStore = {
       isInitialized: false,
       isPaused: false,
@@ -164,6 +168,7 @@ class StroeerVideoplayer {
       })
     }
     this.initUI(_dataStore.defaultUIName)
+    videoEl.getSVP = () => this
     return this
   }
 
