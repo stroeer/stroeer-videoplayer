@@ -352,6 +352,7 @@ class StroeerVideoplayer {
             case HlsJs.ErrorTypes.NETWORK_ERROR:
               // try to recover network error
               console.log('fatal network error encountered, try to recover')
+              videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', { detail: data }))
               hls.startLoad()
               break
             case HlsJs.ErrorTypes.MEDIA_ERROR:
