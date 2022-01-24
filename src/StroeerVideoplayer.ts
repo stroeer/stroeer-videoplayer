@@ -96,7 +96,7 @@ class StroeerVideoplayer {
     if (videoEl.getAttribute('data-stroeervp-initialized') === null) {
       videoEl.setAttribute('data-stroeervp-initialized', '1')
 
-      videoEl.dispatchEvent(new Event('stroeervpInitialized'))
+      videoEl.dispatchEvent(new Event('stroeer-videoplayer:initialized'))
 
       if (ds.videoEl.parentNode !== null) {
         ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)

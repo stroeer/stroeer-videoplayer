@@ -59,10 +59,10 @@ it('should not log when logging is explicitly disabled', () => {
   expect(StrooerVideoplayer.log()('info', 1)).toBe(false)
 })
 
-it('should trigger stroeervpInitialized', () => {
+it('should trigger stroeer-videoplayer:initialized', () => {
   const videoEl = document.createElement('video')
   let triggered = false
-  videoEl.addEventListener('stroeervpInitialized', () => {
+  videoEl.addEventListener('stroeer-videoplayer:initialized', () => {
     triggered = true
   })
   new StrooerVideoplayer(videoEl) // eslint-disable-line no-new
