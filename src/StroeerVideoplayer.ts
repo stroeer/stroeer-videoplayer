@@ -371,7 +371,6 @@ class StroeerVideoplayer {
         }
       }
     })
-
   }
 
   setAutoplay = (autoplay: boolean): void => {
