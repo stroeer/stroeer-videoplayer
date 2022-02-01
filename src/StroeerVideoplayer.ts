@@ -328,47 +328,50 @@ class StroeerVideoplayer {
   loadStreamSource = (): void => {
     const videoEl = this._dataStore.videoEl
     const videoSource = videoEl.querySelector('source')
-    const canPlayNativeHls = videoEl.canPlayType('application/vnd.apple.mpegurl') === 'probably' ||
-      videoEl.canPlayType('application/vnd.apple.mpegurl') === 'maybe'
 
     if (videoSource === null) return
 
-    if (!canPlayNativeHls && HlsJs.isSupported()) {
-      if (this._dataStore.hls !== null) {
-        this._dataStore.hls.destroy()
-        this._dataStore.hls = null
-      }
-      const hls = new HlsJs(this._dataStore.hlsConfig)
-      hls.on(HlsJs.Events.LEVEL_SWITCHED, (event: any, data: any) => {
-        const level = hls.levels[data.level]
-        videoEl.dispatchEvent(new CustomEvent('hlsLevelSwitched', { detail: level }))
-      })
-      this._dataStore.hls = hls
-      hls.loadSource(videoSource.src)
-      hls.attachMedia(videoEl)
-
-      hls.on(HlsJs.Events.ERROR, (event: any, data: any) => {
-        console.log(event, data)
-        if (data.fatal !== undefined) {
-          switch (data.type) {
-            case HlsJs.ErrorTypes.NETWORK_ERROR:
-              // try to recover network error
-              console.log('fatal network error encountered, try to recover')
-              videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', { detail: data }))
-              hls.startLoad()
-              break
-            case HlsJs.ErrorTypes.MEDIA_ERROR:
-              console.log('fatal media error encountered, try to recover')
-              hls.recoverMediaError()
-              break
-            default:
-              // cannot recover
-              hls.destroy()
-              break
-          }
-        }
-      })
+    if (this._dataStore.hls !== null) {
+      this._dataStore.hls.destroy()
+      this._dataStore.hls = null
     }
+    const hls = new HlsJs(this._dataStore.hlsConfig)
+    hls.on(HlsJs.Events.LEVEL_SWITCHED, (event: any, data: any) => {
+      const level = hls.levels[data.level]
+      videoEl.dispatchEvent(new CustomEvent('hlsLevelSwitched', { detail: level }))
+    })
+    this._dataStore.hls = hls
+    hls.loadSource(videoSource.src)
+    hls.attachMedia(videoEl)
+
+    hls.on(HlsJs.Events.ERROR, (event: any, data: any) => {
+      videoEl.dispatchEvent(new CustomEvent('hlsError', {
+        detail: {
+          event: event,
+          data: data
+        }
+      }))
+      console.log(event, data)
+      if (data.fatal !== undefined) {
+        switch (data.type) {
+          case HlsJs.ErrorTypes.NETWORK_ERROR:
+            // try to recover network error
+            console.log('fatal network error encountered, try to recover')
+            videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', { detail: data }))
+            hls.startLoad()
+            break
+          case HlsJs.ErrorTypes.MEDIA_ERROR:
+            console.log('fatal media error encountered, try to recover')
+            hls.recoverMediaError()
+            break
+          default:
+            // cannot recover
+            hls.destroy()
+            break
+        }
+      }
+    })
+
   }
 
   setAutoplay = (autoplay: boolean): void => {
