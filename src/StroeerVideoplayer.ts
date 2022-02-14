@@ -314,6 +314,16 @@ class StroeerVideoplayer {
     }
   }
 
+  getSource = (): string => {
+    const videoEl = this._dataStore.videoEl
+    const videoSource = videoEl.querySelector('source')
+    if (videoSource !== null) {
+      return videoSource.src
+    } else {
+      return ''
+    }
+  }
+
   loadFirstChunk = (): void => {
     const hls = this._dataStore.hls
     if (hls === null) return
@@ -368,6 +378,34 @@ class StroeerVideoplayer {
           }
         }
       })
+    } else {
+      // Fallback for native HLS
+      // We need to check the manifest response code manually
+      window.fetch(this.getSource(), { mode: 'cors' })
+        .then((response) => {
+          // response status as string
+          const rsas = response.status.toString()
+          if (rsas.startsWith('2') || rsas.startsWith('3')) {
+            return
+          }
+          const res: any = response
+          res.code = response.status
+          videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', {
+            detail: {
+              response: res
+            }
+          }))
+        })
+        .catch((error) => {
+          console.log('error fetching manifest', error)
+          videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', {
+            detail: {
+              response: {
+                code: 0
+              }
+            }
+          }))
+        })
     }
   }
 
