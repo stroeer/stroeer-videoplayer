@@ -381,7 +381,7 @@ class StroeerVideoplayer {
     } else {
       // Fallback for native HLS
       // We need to check the manifest response code manually
-      window.fetch(this.getSource(), { mode: 'cors' })
+      window.fetch(this.getSource(), { mode: 'cors', cache: 'no-cache' })
         .then((response) => {
           // response status as string
           const rsas = response.status.toString()
