@@ -46,6 +46,7 @@ interface IStroeerVideoplayerDataStore {
   contentVideoFifthOctile: boolean
   contentVideoSixthOctile: boolean
   contentVideoSeventhOctile: boolean
+  contentVideoSixSecondsBeforeEnd: boolean
   isContentVideo: boolean
   uiName: string | undefined
   hls: null | HlsJs
@@ -87,6 +88,7 @@ class StroeerVideoplayer {
       contentVideoFifthOctile: false,
       contentVideoSixthOctile: false,
       contentVideoSeventhOctile: false,
+      contentVideoSixSecondsBeforeEnd: false,
       isContentVideo: true,
       uiName: _dataStore.defaultUIName,
       hls: null,
@@ -157,6 +159,7 @@ class StroeerVideoplayer {
           ds.contentVideoFifthOctile = false
           ds.contentVideoSixthOctile = false
           ds.contentVideoSeventhOctile = false
+          ds.contentVideoSixSecondsBeforeEnd = false
           this.dispatchEvent(new Event('contentVideoEnded'))
         }
       })
@@ -193,6 +196,10 @@ class StroeerVideoplayer {
           if (!ds.contentVideoSeventhOctile && this.currentTime >= this.duration / 8 * 7) {
             ds.contentVideoSeventhOctile = true
             this.dispatchEvent(new Event('contentVideoSeventhOctile'))
+          }
+          if (!ds.contentVideoSixSecondsBeforeEnd && this.currentTime >= this.duration - 6) {
+            ds.contentVideoSixSecondsBeforeEnd = true
+            this.dispatchEvent(new Event('contentVideoSixSecondsBeforeEnd'))
           }
         }
       })
