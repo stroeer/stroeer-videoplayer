@@ -120,12 +120,32 @@ it('should trigger contentVideoStart', () => {
   expect(triggered).toBe(true)
 })
 
-it('should trigger contentVideoFirstQuartile', () => {
+it('should trigger contentVideoFirstOctile', () => {
   let triggered = false
-  videoEl.addEventListener('contentVideoFirstQuartile', () => {
+  videoEl.addEventListener('contentVideoFirstOctile', () => {
     triggered = true
   })
-  videoEl.currentTime = videoEl.duration / 4
+  videoEl.currentTime = videoEl.duration / 8 * 1
+  videoEl.dispatchEvent(new window.Event('timeupdate'))
+  expect(triggered).toBe(true)
+})
+
+it('should trigger contentVideoSecondOctile', () => {
+  let triggered = false
+  videoEl.addEventListener('contentVideoSecondOctile', () => {
+    triggered = true
+  })
+  videoEl.currentTime = videoEl.duration / 8 * 2
+  videoEl.dispatchEvent(new window.Event('timeupdate'))
+  expect(triggered).toBe(true)
+})
+
+it('should trigger contentVideoThirdOctile', () => {
+  let triggered = false
+  videoEl.addEventListener('contentVideoThirdOctile', () => {
+    triggered = true
+  })
+  videoEl.currentTime = videoEl.duration / 8 * 3
   videoEl.dispatchEvent(new window.Event('timeupdate'))
   expect(triggered).toBe(true)
 })
@@ -140,12 +160,32 @@ it('should trigger contentVideoMidpoint', () => {
   expect(triggered).toBe(true)
 })
 
-it('should trigger contentVideoThirdQuartile', () => {
+it('should trigger contentVideoFifthOctile', () => {
   let triggered = false
-  videoEl.addEventListener('contentVideoThirdQuartile', () => {
+  videoEl.addEventListener('contentVideoFifthOctile', () => {
     triggered = true
   })
-  videoEl.currentTime = videoEl.duration / 4 * 3
+  videoEl.currentTime = videoEl.duration / 8 * 5
+  videoEl.dispatchEvent(new window.Event('timeupdate'))
+  expect(triggered).toBe(true)
+})
+
+it('should trigger contentVideoSixthOctile', () => {
+  let triggered = false
+  videoEl.addEventListener('contentVideoSixthOctile', () => {
+    triggered = true
+  })
+  videoEl.currentTime = videoEl.duration / 8 * 6
+  videoEl.dispatchEvent(new window.Event('timeupdate'))
+  expect(triggered).toBe(true)
+})
+
+it('should trigger contentVideoSeventhOctile', () => {
+  let triggered = false
+  videoEl.addEventListener('contentVideoSeventhOctile', () => {
+    triggered = true
+  })
+  videoEl.currentTime = videoEl.duration / 8 * 7
   videoEl.dispatchEvent(new window.Event('timeupdate'))
   expect(triggered).toBe(true)
 })

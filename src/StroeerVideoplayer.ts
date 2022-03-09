@@ -39,9 +39,13 @@ interface IStroeerVideoplayerDataStore {
   videoFirstPlay: boolean
   contentVideoStarted: boolean
   contentVideoEnded: boolean
-  contentVideoFirstQuartile: boolean
+  contentVideoFirstOctile: boolean
+  contentVideoSecondOctile: boolean
+  contentVideoThirdOctile: boolean
   contentVideoMidpoint: boolean
-  contentVideoThirdQuartile: boolean
+  contentVideoFifthOctile: boolean
+  contentVideoSixthOctile: boolean
+  contentVideoSeventhOctile: boolean
   isContentVideo: boolean
   uiName: string | undefined
   hls: null | HlsJs
@@ -76,9 +80,13 @@ class StroeerVideoplayer {
       videoFirstPlay: true,
       contentVideoStarted: false,
       contentVideoEnded: false,
-      contentVideoFirstQuartile: false,
+      contentVideoFirstOctile: false,
+      contentVideoSecondOctile: false,
+      contentVideoThirdOctile: false,
       contentVideoMidpoint: false,
-      contentVideoThirdQuartile: false,
+      contentVideoFifthOctile: false,
+      contentVideoSixthOctile: false,
+      contentVideoSeventhOctile: false,
       isContentVideo: true,
       uiName: _dataStore.defaultUIName,
       hls: null,
@@ -142,9 +150,13 @@ class StroeerVideoplayer {
         if (ds.isContentVideo) {
           ds.contentVideoStarted = false
           ds.contentVideoEnded = true
-          ds.contentVideoFirstQuartile = false
+          ds.contentVideoFirstOctile = false
+          ds.contentVideoSecondOctile = false
+          ds.contentVideoThirdOctile = false
           ds.contentVideoMidpoint = false
-          ds.contentVideoThirdQuartile = false
+          ds.contentVideoFifthOctile = false
+          ds.contentVideoSixthOctile = false
+          ds.contentVideoSeventhOctile = false
           this.dispatchEvent(new Event('contentVideoEnded'))
         }
       })
@@ -154,17 +166,33 @@ class StroeerVideoplayer {
             ds.contentVideoStarted = true
             this.dispatchEvent(new Event('contentVideoStart'))
           }
-          if (!ds.contentVideoFirstQuartile && this.currentTime >= this.duration / 4) {
-            ds.contentVideoFirstQuartile = true
-            this.dispatchEvent(new Event('contentVideoFirstQuartile'))
+          if (!ds.contentVideoFirstOctile && this.currentTime >= this.duration / 8 * 1) {
+            ds.contentVideoFirstOctile = true
+            this.dispatchEvent(new Event('contentVideoFirstOctile'))
           }
-          if (!ds.contentVideoMidpoint && this.currentTime >= this.duration / 2) {
+          if (!ds.contentVideoSecondOctile && this.currentTime >= this.duration / 8 * 2) {
+            ds.contentVideoSecondOctile = true
+            this.dispatchEvent(new Event('contentVideoSecondOctile'))
+          }
+          if (!ds.contentVideoThirdOctile && this.currentTime >= this.duration / 8 * 3) {
+            ds.contentVideoThirdOctile = true
+            this.dispatchEvent(new Event('contentVideoThirdOctile'))
+          }
+          if (!ds.contentVideoMidpoint && this.currentTime >= this.duration / 8 * 4) {
             ds.contentVideoMidpoint = true
             this.dispatchEvent(new Event('contentVideoMidpoint'))
           }
-          if (!ds.contentVideoThirdQuartile && this.currentTime >= this.duration / 4 * 3) {
-            ds.contentVideoThirdQuartile = true
-            this.dispatchEvent(new Event('contentVideoThirdQuartile'))
+          if (!ds.contentVideoFifthOctile && this.currentTime >= this.duration / 8 * 5) {
+            ds.contentVideoFifthOctile = true
+            this.dispatchEvent(new Event('contentVideoFifthOctile'))
+          }
+          if (!ds.contentVideoSixthOctile && this.currentTime >= this.duration / 8 * 6) {
+            ds.contentVideoSixthOctile = true
+            this.dispatchEvent(new Event('contentVideoSixthOctile'))
+          }
+          if (!ds.contentVideoSeventhOctile && this.currentTime >= this.duration / 8 * 7) {
+            ds.contentVideoSeventhOctile = true
+            this.dispatchEvent(new Event('contentVideoSeventhOctile'))
           }
         }
       })
