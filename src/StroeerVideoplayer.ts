@@ -480,4 +480,5 @@ class StroeerVideoplayer {
   }
 }
 
+export { StroeerVideoplayer }
 export default StroeerVideoplayer

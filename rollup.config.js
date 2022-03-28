@@ -8,7 +8,7 @@ export default [{
   input: 'src/StroeerVideoplayer.ts',
   output: {
     file: 'dist/StroeerVideoplayer.umd.js',
-    exports: 'default',
+    exports: 'named',
     format: 'umd',
     name: 'StroeerVideoplayer',
     sourcemap: true
@@ -25,7 +25,9 @@ export default [{
   output: [
     {
       file: pkg.main,
-      format: 'cjs'
+      exports: 'named',
+      format: 'cjs',
+      sourcemap: true
     }
   ],
   plugins: [
@@ -40,7 +42,8 @@ export default [{
   output: [
     {
       file: pkg.module,
-      format: 'es'
+      format: 'es',
+      sourcemap: true
     }
   ],
   plugins: [
