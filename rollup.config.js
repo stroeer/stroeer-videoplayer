@@ -4,6 +4,9 @@ import pkg from './package.json'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 
+const isDevMode = Boolean(process.env.ROLLUP_WATCH)
+console.log('is dev mode', isDevMode)
+
 export default [{
   input: 'src/StroeerVideoplayer.ts',
   output: {
@@ -11,12 +14,14 @@ export default [{
     exports: 'default',
     format: 'umd',
     name: 'StroeerVideoplayer',
-    sourcemap: true
+    sourcemap: isDevMode
   },
   plugins: [
     resolve(),
     commonjs(),
-    typescript(),
+    typescript({
+      sourceMap: isDevMode
+    }),
     json()
   ]
 },
@@ -25,13 +30,17 @@ export default [{
   output: [
     {
       file: pkg.main,
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'default',
+      sourcemap: isDevMode
     }
   ],
   plugins: [
     resolve(),
     commonjs(),
-    typescript(),
+    typescript({
+      sourceMap: isDevMode
+    }),
     json()
   ]
 },
@@ -40,13 +49,17 @@ export default [{
   output: [
     {
       file: pkg.module,
-      format: 'es'
+      format: 'es',
+      exports: 'default',
+      sourcemap: isDevMode
     }
   ],
   plugins: [
     resolve(),
     commonjs(),
-    typescript(),
+    typescript({
+      sourceMap: isDevMode
+    }),
     json()
   ]
 }]
