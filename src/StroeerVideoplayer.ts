@@ -101,6 +101,9 @@ class StroeerVideoplayer {
     }
     this.version = version
 
+    log()('StroeerVideoplayer.version', version)
+    log()('StroeerVideoplayer.HlsJs.version', HlsJs.version)
+
     const ds = this._dataStore
 
     if (videoEl.getAttribute('data-stroeervp-initialized') === null) {
@@ -393,21 +396,24 @@ class StroeerVideoplayer {
       hls.attachMedia(videoEl)
 
       hls.on(HlsJs.Events.ERROR, (event: any, data: any) => {
-        console.log(event, data)
+        log('error')('HlsJs.Events.Error', event, data)
         if (data.fatal !== undefined) {
           switch (data.type) {
             case HlsJs.ErrorTypes.NETWORK_ERROR:
               // try to recover network error
-              console.log('fatal network error encountered, try to recover')
+              log('error')('fatal network error encountered, try to recover')
               videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', { detail: data }))
               hls.startLoad()
               break
             case HlsJs.ErrorTypes.MEDIA_ERROR:
-              console.log('fatal media error encountered, try to recover')
-              hls.recoverMediaError()
+              // This seems to be a bit buggy, so we're going to ignore it for now
+              // it seems as if it breaks the video playback and you can't resume it,
+              // even though it's stated in the docs that it's supposed to recover from this error and is best practice
+              // log('error')('fatal media error encountered, try to recover')
+              // hls.recoverMediaError()
               break
             default:
-              // cannot recover
+              log('error')('fatal error encountered, cannot recover', data.type)
               hls.destroy()
               break
           }
