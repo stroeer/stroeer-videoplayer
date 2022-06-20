@@ -36,6 +36,7 @@ interface IStroeerVideoplayerDataStore {
   rootEl: HTMLDivElement
   containmentEl: HTMLDivElement
   uiEl: HTMLDivElement
+  contentVideoInitialSrc: string
   videoFirstPlay: boolean
   contentVideoStarted: boolean
   contentVideoEnded: boolean
@@ -78,6 +79,7 @@ class StroeerVideoplayer {
       rootEl: document.createElement('div'),
       containmentEl: document.createElement('div'),
       uiEl: document.createElement('div'),
+      contentVideoInitialSrc: videoEl.querySelector('source')?.src ?? '',
       videoFirstPlay: true,
       contentVideoStarted: false,
       contentVideoEnded: false,
@@ -130,13 +132,18 @@ class StroeerVideoplayer {
           }
         }
         if (ds.isContentVideo) {
-          if (ds.isPaused) {
+          if (ds.isPaused && this.currentTime > 0) {
             ds.isPaused = false
             this.dispatchEvent(new Event('contentVideoResume'))
           }
           if (ds.contentVideoEnded) {
             ds.contentVideoEnded = false
-            this.dispatchEvent(new Event('contentVideoReplay'))
+            const currentSrc = this.querySelector('source')?.src ?? ''
+            if (ds.contentVideoInitialSrc === currentSrc) {
+              this.dispatchEvent(new Event('contentVideoReplay'))
+            } else {
+              ds.contentVideoInitialSrc = currentSrc
+            }
           }
         }
       })
