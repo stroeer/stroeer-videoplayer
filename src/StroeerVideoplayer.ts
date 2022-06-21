@@ -13,6 +13,7 @@ interface IDataStore {
 
 interface IRegisteredUI {
   uiName: string
+  new (): any
   init: Function
   deinit: Function
 }
@@ -25,6 +26,7 @@ interface IVideoData {
 
 interface IRegisteredPlugin {
   pluginName: string
+  new (): any
   init: Function
   deinit: Function
 }
@@ -50,6 +52,8 @@ interface IStroeerVideoplayerDataStore {
   contentVideoSixSecondsBeforeEnd: boolean
   isContentVideo: boolean
   uiName: string | undefined
+  activeUI: IRegisteredUI | undefined
+  activePlugins: Map<string, IRegisteredPlugin>
   hls: null | HlsJs
   hlsConfig: Object
 }
@@ -93,6 +97,8 @@ class StroeerVideoplayer {
       contentVideoSixSecondsBeforeEnd: false,
       isContentVideo: true,
       uiName: _dataStore.defaultUIName,
+      activeUI: undefined,
+      activePlugins: new Map(),
       hls: null,
       hlsConfig: {
         maxBufferSize: 0,
@@ -284,10 +290,13 @@ class StroeerVideoplayer {
   }
 
   initUI = (uiName: string): boolean => {
-    if (_registeredUIs.has(uiName)) {
-      const ui = _registeredUIs.get(uiName) as IRegisteredUI
+    if (_registeredUIs.has(uiName) && this._dataStore.activeUI === undefined) {
+      const UI = _registeredUIs.get(uiName) as IRegisteredUI
       this._dataStore.uiName = uiName
-      ui.init(this)
+      this._dataStore.activeUI = new UI()
+      if (this._dataStore.activeUI !== undefined) {
+        this._dataStore.activeUI.init(this)
+      }
       return true
     } else {
       return false
@@ -295,10 +304,12 @@ class StroeerVideoplayer {
   }
 
   deinitUI = (uiName: string): boolean => {
-    if (_registeredUIs.has(uiName)) {
-      const ui = _registeredUIs.get(uiName) as IRegisteredUI
+    if (_registeredUIs.has(uiName) && this._dataStore.uiName === uiName) {
       this._dataStore.uiName = undefined
-      ui.deinit(this)
+      if (this._dataStore.activeUI !== undefined) {
+        this._dataStore.activeUI.deinit(this)
+        this._dataStore.activeUI = undefined
+      }
       return true
     } else {
       return false
@@ -315,9 +326,11 @@ class StroeerVideoplayer {
   }
 
   initPlugin = (pluginName: string, opts?: any): boolean => {
-    if (_registeredPlugins.has(pluginName)) {
-      const plugin = _registeredPlugins.get(pluginName) as IRegisteredPlugin
+    if (_registeredPlugins.has(pluginName) && !this._dataStore.activePlugins.has(pluginName)) {
+      const Plugin = _registeredPlugins.get(pluginName) as IRegisteredPlugin
+      const plugin = new Plugin()
       plugin.init(this, opts)
+      this._dataStore.activePlugins.set(pluginName, plugin)
       return true
     } else {
       return false
@@ -325,9 +338,10 @@ class StroeerVideoplayer {
   }
 
   deinitPlugin = (pluginName: string): boolean => {
-    if (_registeredPlugins.has(pluginName)) {
-      const plugin = _registeredPlugins.get(pluginName) as IRegisteredPlugin
+    if (_registeredPlugins.has(pluginName) && this._dataStore.activePlugins.has(pluginName)) {
+      const plugin = this._dataStore.activePlugins.get(pluginName) as IRegisteredPlugin
       plugin.deinit(this)
+      this._dataStore.activePlugins.delete(pluginName)
       return true
     } else {
       return false
