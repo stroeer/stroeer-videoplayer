@@ -200,28 +200,42 @@ it('should trigger contentVideoEnded', () => {
 })
 
 it('should register an UI', () => {
-  const retval = StrooerVideoplayer.registerUI({
-    uiName: 'default',
-    init: () => {
-      return true
-    },
-    deinit: () => {
+  class TempUI {
+    public static uiName: string = 'default'
+    constructor () {
+      return this
+    }
+
+    init = (): boolean => {
       return true
     }
-  })
+
+    deinit = (): boolean => {
+      return true
+    }
+  }
+  // @ts-expect-error
+  const retval = StrooerVideoplayer.registerUI(TempUI)
   expect(retval).toBe(true)
 })
 
 it('should not register an already registered UI with the same name', () => {
-  const retval = StrooerVideoplayer.registerUI({
-    uiName: 'default',
-    init: () => {
-      return true
-    },
-    deinit: () => {
+  class TempUI {
+    public static uiName: string = 'default'
+    constructor () {
+      return this
+    }
+
+    init = (): boolean => {
       return true
     }
-  })
+
+    deinit = (): boolean => {
+      return true
+    }
+  }
+  // @ts-expect-error
+  const retval = StrooerVideoplayer.registerUI(TempUI)
   expect(retval).toBe(false)
 })
 
@@ -278,28 +292,42 @@ it('should be the Video Element from the datastore', () => {
 
 // Plugin testing
 it('should register a Plugin', () => {
-  const retval = StrooerVideoplayer.registerPlugin({
-    pluginName: 'ivad',
-    init: () => {
-      return true
-    },
-    deinit: () => {
+  class TempPlugin {
+    public static pluginName: string = 'ivad'
+    constructor () {
+      return this
+    }
+
+    init = (): boolean => {
       return true
     }
-  })
+
+    deinit = (): boolean => {
+      return true
+    }
+  }
+  // @ts-expect-error
+  const retval = StrooerVideoplayer.registerPlugin(TempPlugin)
   expect(retval).toBe(true)
 })
 
 it('should not register an already registered Plugin with the same name', () => {
-  const retval = StrooerVideoplayer.registerPlugin({
-    pluginName: 'ivad',
-    init: () => {
-      return true
-    },
-    deinit: () => {
+  class TempPlugin {
+    public static pluginName: string = 'ivad'
+    constructor () {
+      return this
+    }
+
+    init = (): boolean => {
       return true
     }
-  })
+
+    deinit = (): boolean => {
+      return true
+    }
+  }
+  // @ts-expect-error
+  const retval = StrooerVideoplayer.registerPlugin(TempPlugin)
   expect(retval).toBe(false)
 })
 
