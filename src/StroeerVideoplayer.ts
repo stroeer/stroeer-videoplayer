@@ -485,7 +485,10 @@ class StroeerVideoplayer {
   }
 
   setSrc = (playlist: string): void => {
-    this._dataStore.videoEl.innerHTML = `<source src="${playlist}" type="application/x-mpegURL">`
+    const videoEl = this._dataStore.videoEl
+    videoEl.innerHTML = `<source src="${playlist}" type="application/x-mpegURL">`
+    videoEl.load()
+    videoEl.currentTime = 0
   }
 
   setMetaData = (videoData: IVideoData): void => {
