@@ -11,13 +11,15 @@ interface IDataStore {
   version: string
 }
 
+interface IConstructedRegisteredUI {
+  uiName: string
+  init: (svp: StroeerVideoplayer) => void
+  deinit: (svp: StroeerVideoplayer) => void
+}
+
 interface IRegisteredUI {
   uiName: string
-  new (): {
-    uiName: string
-    init: () => void
-    deinit: () => void
-  }
+  new (): IConstructedRegisteredUI
 }
 
 interface IVideoData {
@@ -26,13 +28,15 @@ interface IVideoData {
   // add more if needed
 }
 
+interface IConstructedRegisteredPlugin {
+  pluginName: string
+  init: (svp: StroeerVideoplayer, opts?: any) => void
+  deinit: (svp: StroeerVideoplayer) => void
+}
+
 interface IRegisteredPlugin {
   pluginName: string
-  new (): {
-    pluginName: string
-    init: () => void
-    deinit: () => void
-  }
+  new (): IConstructedRegisteredPlugin
 }
 
 interface IStroeerVideoplayerDataStore {
@@ -56,8 +60,8 @@ interface IStroeerVideoplayerDataStore {
   contentVideoSixSecondsBeforeEnd: boolean
   isContentVideo: boolean
   uiName: string | undefined
-  activeUI: any | undefined
-  activePlugins: Map<string, any>
+  activeUI: IConstructedRegisteredUI | undefined
+  activePlugins: Map<string, IConstructedRegisteredPlugin>
   hls: null | HlsJs
   hlsConfig: Object
 }
@@ -331,7 +335,7 @@ class StroeerVideoplayer {
 
   initPlugin = (pluginName: string, opts?: any): boolean => {
     if (_registeredPlugins.has(pluginName) && !this._dataStore.activePlugins.has(pluginName)) {
-      const Plugin = _registeredPlugins.get(pluginName)
+      const Plugin = _registeredPlugins.get(pluginName) as IRegisteredPlugin
       const plugin = new Plugin()
       plugin.init(this, opts)
       this._dataStore.activePlugins.set(pluginName, plugin)
@@ -343,7 +347,7 @@ class StroeerVideoplayer {
 
   deinitPlugin = (pluginName: string): boolean => {
     if (_registeredPlugins.has(pluginName) && this._dataStore.activePlugins.has(pluginName)) {
-      const plugin = this._dataStore.activePlugins.get(pluginName)
+      const plugin = this._dataStore.activePlugins.get(pluginName) as IConstructedRegisteredPlugin
       plugin.deinit(this)
       this._dataStore.activePlugins.delete(pluginName)
       return true
