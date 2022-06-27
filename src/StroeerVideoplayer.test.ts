@@ -4,6 +4,7 @@ import { version } from '../package.json'
 const containerEl = document.createElement('div')
 const videoEl = document.createElement('video')
 Object.defineProperty(videoEl, 'duration', { value: 9 })
+Object.defineProperty(videoEl, 'load', { value: jest.fn() })
 const source1 = document.createElement('source')
 source1.type = 'video/mp4'
 source1.src = 'https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding-240p.mp4'
@@ -214,7 +215,6 @@ it('should register an UI', () => {
       return true
     }
   }
-  // @ts-expect-error
   const retval = StrooerVideoplayer.registerUI(TempUI)
   expect(retval).toBe(true)
 })
@@ -234,7 +234,6 @@ it('should not register an already registered UI with the same name', () => {
       return true
     }
   }
-  // @ts-expect-error
   const retval = StrooerVideoplayer.registerUI(TempUI)
   expect(retval).toBe(false)
 })
@@ -306,7 +305,6 @@ it('should register a Plugin', () => {
       return true
     }
   }
-  // @ts-expect-error
   const retval = StrooerVideoplayer.registerPlugin(TempPlugin)
   expect(retval).toBe(true)
 })
@@ -326,7 +324,6 @@ it('should not register an already registered Plugin with the same name', () => 
       return true
     }
   }
-  // @ts-expect-error
   const retval = StrooerVideoplayer.registerPlugin(TempPlugin)
   expect(retval).toBe(false)
 })
