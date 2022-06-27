@@ -12,8 +12,8 @@ interface IDataStore {
 }
 
 interface IConstructedRegisteredUI {
-  init: (svp: StroeerVideoplayer) => void
-  deinit: (svp: StroeerVideoplayer) => void
+  init: (svp: any) => void
+  deinit: (svp: any) => void
 }
 
 interface IRegisteredUI {
@@ -28,8 +28,8 @@ interface IVideoData {
 }
 
 interface IConstructedRegisteredPlugin {
-  init: (svp: StroeerVideoplayer, opts?: any) => void
-  deinit: (svp: StroeerVideoplayer) => void
+  init: (svp: any, opts?: any) => void
+  deinit: (svp: any) => void
 }
 
 interface IRegisteredPlugin {
