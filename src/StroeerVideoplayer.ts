@@ -12,7 +12,6 @@ interface IDataStore {
 }
 
 interface IConstructedRegisteredUI {
-  uiName: string
   init: (svp: StroeerVideoplayer) => void
   deinit: (svp: StroeerVideoplayer) => void
 }
@@ -29,7 +28,6 @@ interface IVideoData {
 }
 
 interface IConstructedRegisteredPlugin {
-  pluginName: string
   init: (svp: StroeerVideoplayer, opts?: any) => void
   deinit: (svp: StroeerVideoplayer) => void
 }
