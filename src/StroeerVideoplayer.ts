@@ -13,9 +13,11 @@ interface IDataStore {
 
 interface IRegisteredUI {
   uiName: string
-  new (): any
-  init: Function
-  deinit: Function
+  new (): {
+    uiName: string
+    init: () => void
+    deinit: () => void
+  }
 }
 
 interface IVideoData {
@@ -26,9 +28,11 @@ interface IVideoData {
 
 interface IRegisteredPlugin {
   pluginName: string
-  new (): any
-  init: Function
-  deinit: Function
+  new (): {
+    pluginName: string
+    init: () => void
+    deinit: () => void
+  }
 }
 
 interface IStroeerVideoplayerDataStore {
@@ -52,8 +56,8 @@ interface IStroeerVideoplayerDataStore {
   contentVideoSixSecondsBeforeEnd: boolean
   isContentVideo: boolean
   uiName: string | undefined
-  activeUI: IRegisteredUI | undefined
-  activePlugins: Map<string, IRegisteredPlugin>
+  activeUI: any | undefined
+  activePlugins: Map<string, any>
   hls: null | HlsJs
   hlsConfig: Object
 }
@@ -327,7 +331,7 @@ class StroeerVideoplayer {
 
   initPlugin = (pluginName: string, opts?: any): boolean => {
     if (_registeredPlugins.has(pluginName) && !this._dataStore.activePlugins.has(pluginName)) {
-      const Plugin = _registeredPlugins.get(pluginName) as IRegisteredPlugin
+      const Plugin = _registeredPlugins.get(pluginName)
       const plugin = new Plugin()
       plugin.init(this, opts)
       this._dataStore.activePlugins.set(pluginName, plugin)
@@ -339,7 +343,7 @@ class StroeerVideoplayer {
 
   deinitPlugin = (pluginName: string): boolean => {
     if (_registeredPlugins.has(pluginName) && this._dataStore.activePlugins.has(pluginName)) {
-      const plugin = this._dataStore.activePlugins.get(pluginName) as IRegisteredPlugin
+      const plugin = this._dataStore.activePlugins.get(pluginName)
       plugin.deinit(this)
       this._dataStore.activePlugins.delete(pluginName)
       return true
