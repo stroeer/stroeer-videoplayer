@@ -57,6 +57,7 @@ interface IStroeerVideoplayerDataStore {
   contentVideoSeventhOctile: boolean
   contentVideoSixSecondsBeforeEnd: boolean
   isContentVideo: boolean
+  wasPlayingOnTabLeave: boolean
   uiName: string | undefined
   activeUI: IConstructedRegisteredUI | undefined
   activePlugins: Map<string, IConstructedRegisteredPlugin>
@@ -102,6 +103,7 @@ class StroeerVideoplayer {
       contentVideoSeventhOctile: false,
       contentVideoSixSecondsBeforeEnd: false,
       isContentVideo: true,
+      wasPlayingOnTabLeave: false,
       uiName: _dataStore.defaultUIName,
       activeUI: undefined,
       activePlugins: new Map(),
@@ -124,6 +126,28 @@ class StroeerVideoplayer {
       videoEl.setAttribute('data-stroeervp-initialized', '1')
 
       videoEl.dispatchEvent(new Event('stroeer-videoplayer:initialized'))
+
+      const onVisibilityChangeCallback = (): void => {
+        if (document.hidden) {
+          if (!videoEl.paused) {
+            ds.wasPlayingOnTabLeave = true
+            videoEl.pause()
+          }
+        } else {
+          if (ds.wasPlayingOnTabLeave) {
+            ds.wasPlayingOnTabLeave = false
+            void videoEl.play()
+          }
+        }
+      }
+
+      if (videoEl.getAttribute('data-disable-pause-on-tab-leave') === null) {
+        document.addEventListener(
+          'visibilitychange',
+          onVisibilityChangeCallback,
+          false
+        )
+      }
 
       if (ds.videoEl.parentNode !== null) {
         ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
