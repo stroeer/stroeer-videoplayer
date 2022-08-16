@@ -12,8 +12,8 @@ interface IDataStore {
 }
 
 interface IConstructedRegisteredUI {
-  init: (svp: any) => void
-  deinit: (svp: any) => void
+  init: (svp: any, opts?: any) => void
+  deinit: (svp: any, opts?: any) => void
 }
 
 interface IRegisteredUI {
@@ -319,13 +319,13 @@ class StroeerVideoplayer {
     }
   }
 
-  initUI = (uiName: string): boolean => {
+  initUI = (uiName: string, opts?: any): boolean => {
     if (_registeredUIs.has(uiName) && this._dataStore.activeUI === undefined) {
       const UI = _registeredUIs.get(uiName) as IRegisteredUI
       this._dataStore.uiName = uiName
       this._dataStore.activeUI = new UI()
       if (this._dataStore.activeUI !== undefined) {
-        this._dataStore.activeUI.init(this)
+        this._dataStore.activeUI.init(this, opts)
       }
       return true
     } else {
@@ -333,11 +333,11 @@ class StroeerVideoplayer {
     }
   }
 
-  deinitUI = (uiName: string): boolean => {
+  deinitUI = (uiName: string, opts?: any): boolean => {
     if (_registeredUIs.has(uiName) && this._dataStore.uiName === uiName) {
       this._dataStore.uiName = undefined
       if (this._dataStore.activeUI !== undefined) {
-        this._dataStore.activeUI.deinit(this)
+        this._dataStore.activeUI.deinit(this, opts)
         this._dataStore.activeUI = undefined
       }
       return true
@@ -461,7 +461,9 @@ class StroeerVideoplayer {
               // it seems as if it breaks the video playback and you can't resume it,
               // even though it's stated in the docs that it's supposed to recover from this error and is best practice
               // log('error')('fatal media error encountered, try to recover')
-              // hls.recoverMediaError()
+              hls.recoverMediaError()
+              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+              videoEl.play()
               break
             default:
               log('error')('fatal error encountered, cannot recover', data.type)
