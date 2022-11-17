@@ -6,6 +6,8 @@ import HlsJs from 'hls.js'
 import { getRandomItem } from './helper'
 import { throttle } from 'throttle-debounce'
 
+const throttleTimeout = 200
+
 interface IDataStore {
   loggingEnabled: boolean
   defaultUIName: string
@@ -210,7 +212,7 @@ class StroeerVideoplayer {
           this.dispatchEvent(new Event('contentVideoEnded'))
         }
       })
-      const timeUpdateFunction = throttle(1000, (_t: HTMLVideoElement) => {
+      const timeUpdateFunction = throttle(throttleTimeout, (_t: HTMLVideoElement) => {
         if (ds.isContentVideo) {
           if (!ds.contentVideoStarted && _t.currentTime >= 1) {
             ds.contentVideoStarted = true

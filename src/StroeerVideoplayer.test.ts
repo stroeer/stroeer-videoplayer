@@ -1,6 +1,8 @@
 import StrooerVideoplayer from './StroeerVideoplayer'
 import { version } from '../package.json'
 
+jest.useFakeTimers()
+
 const containerEl = document.createElement('div')
 const videoEl = document.createElement('video')
 Object.defineProperty(videoEl, 'duration', { value: 9 })
@@ -11,6 +13,7 @@ source1.src = 'https://evilcdn.net/demo-videos/walialu-44s-testspot-longboarding
 containerEl.appendChild(videoEl)
 
 const p1 = new StrooerVideoplayer(videoEl)
+const timeout = 200
 
 const playStub = jest
   .spyOn(window.HTMLMediaElement.prototype, 'play')
@@ -118,6 +121,7 @@ it('should trigger contentVideoStart', () => {
   })
   videoEl.currentTime = 1
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
@@ -128,6 +132,7 @@ it('should trigger contentVideoFirstOctile', () => {
   })
   videoEl.currentTime = videoEl.duration / 8 * 1
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
@@ -138,6 +143,7 @@ it('should trigger contentVideoSecondOctile', () => {
   })
   videoEl.currentTime = videoEl.duration / 8 * 2
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
@@ -148,6 +154,7 @@ it('should trigger contentVideoThirdOctile', () => {
   })
   videoEl.currentTime = videoEl.duration / 8 * 3
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
@@ -158,6 +165,7 @@ it('should trigger contentVideoMidpoint', () => {
   })
   videoEl.currentTime = videoEl.duration / 2
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
@@ -168,6 +176,7 @@ it('should trigger contentVideoFifthOctile', () => {
   })
   videoEl.currentTime = videoEl.duration / 8 * 5
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
@@ -178,6 +187,7 @@ it('should trigger contentVideoSixthOctile', () => {
   })
   videoEl.currentTime = videoEl.duration / 8 * 6
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
@@ -188,6 +198,7 @@ it('should trigger contentVideoSeventhOctile', () => {
   })
   videoEl.currentTime = videoEl.duration / 8 * 7
   videoEl.dispatchEvent(new window.Event('timeupdate'))
+  jest.advanceTimersByTime(timeout)
   expect(triggered).toBe(true)
 })
 
