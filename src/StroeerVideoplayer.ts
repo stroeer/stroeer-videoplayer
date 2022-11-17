@@ -4,6 +4,7 @@ import noop from './noop'
 import { version } from '../package.json'
 import HlsJs from 'hls.js'
 import { getRandomItem } from './helper'
+import { throttle } from 'throttle-debounce'
 
 interface IDataStore {
   loggingEnabled: boolean
@@ -209,45 +210,48 @@ class StroeerVideoplayer {
           this.dispatchEvent(new Event('contentVideoEnded'))
         }
       })
-      videoEl.addEventListener('timeupdate', function () {
+      const timeUpdateFunction = throttle(1000, (_t: HTMLVideoElement) => {
         if (ds.isContentVideo) {
-          if (!ds.contentVideoStarted && this.currentTime >= 1) {
+          if (!ds.contentVideoStarted && _t.currentTime >= 1) {
             ds.contentVideoStarted = true
-            this.dispatchEvent(new Event('contentVideoStart'))
+            _t.dispatchEvent(new Event('contentVideoStart'))
           }
-          if (!ds.contentVideoFirstOctile && this.currentTime >= this.duration / 8 * 1) {
+          if (!ds.contentVideoFirstOctile && _t.currentTime >= _t.duration / 8 * 1) {
             ds.contentVideoFirstOctile = true
-            this.dispatchEvent(new Event('contentVideoFirstOctile'))
+            _t.dispatchEvent(new Event('contentVideoFirstOctile'))
           }
-          if (!ds.contentVideoSecondOctile && this.currentTime >= this.duration / 8 * 2) {
+          if (!ds.contentVideoSecondOctile && _t.currentTime >= _t.duration / 8 * 2) {
             ds.contentVideoSecondOctile = true
-            this.dispatchEvent(new Event('contentVideoSecondOctile'))
+            _t.dispatchEvent(new Event('contentVideoSecondOctile'))
           }
-          if (!ds.contentVideoThirdOctile && this.currentTime >= this.duration / 8 * 3) {
+          if (!ds.contentVideoThirdOctile && _t.currentTime >= _t.duration / 8 * 3) {
             ds.contentVideoThirdOctile = true
-            this.dispatchEvent(new Event('contentVideoThirdOctile'))
+            _t.dispatchEvent(new Event('contentVideoThirdOctile'))
           }
-          if (!ds.contentVideoMidpoint && this.currentTime >= this.duration / 8 * 4) {
+          if (!ds.contentVideoMidpoint && _t.currentTime >= _t.duration / 8 * 4) {
             ds.contentVideoMidpoint = true
-            this.dispatchEvent(new Event('contentVideoMidpoint'))
+            _t.dispatchEvent(new Event('contentVideoMidpoint'))
           }
-          if (!ds.contentVideoFifthOctile && this.currentTime >= this.duration / 8 * 5) {
+          if (!ds.contentVideoFifthOctile && _t.currentTime >= _t.duration / 8 * 5) {
             ds.contentVideoFifthOctile = true
-            this.dispatchEvent(new Event('contentVideoFifthOctile'))
+            _t.dispatchEvent(new Event('contentVideoFifthOctile'))
           }
-          if (!ds.contentVideoSixthOctile && this.currentTime >= this.duration / 8 * 6) {
+          if (!ds.contentVideoSixthOctile && _t.currentTime >= _t.duration / 8 * 6) {
             ds.contentVideoSixthOctile = true
-            this.dispatchEvent(new Event('contentVideoSixthOctile'))
+            _t.dispatchEvent(new Event('contentVideoSixthOctile'))
           }
-          if (!ds.contentVideoSeventhOctile && this.currentTime >= this.duration / 8 * 7) {
+          if (!ds.contentVideoSeventhOctile && _t.currentTime >= _t.duration / 8 * 7) {
             ds.contentVideoSeventhOctile = true
-            this.dispatchEvent(new Event('contentVideoSeventhOctile'))
+            _t.dispatchEvent(new Event('contentVideoSeventhOctile'))
           }
-          if (!ds.contentVideoSixSecondsBeforeEnd && this.currentTime >= this.duration - 6) {
+          if (!ds.contentVideoSixSecondsBeforeEnd && _t.currentTime >= _t.duration - 6) {
             ds.contentVideoSixSecondsBeforeEnd = true
-            this.dispatchEvent(new Event('contentVideoSixSecondsBeforeEnd'))
+            _t.dispatchEvent(new Event('contentVideoSixSecondsBeforeEnd'))
           }
         }
+      })
+      videoEl.addEventListener('timeupdate', function () {
+        timeUpdateFunction(this)
       })
     }
     this.initUI(_dataStore.defaultUIName)
