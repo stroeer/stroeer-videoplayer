@@ -4,9 +4,6 @@ import noop from './noop'
 import { version } from '../package.json'
 import HlsJs from 'hls.js'
 import { getRandomItem } from './helper'
-import { throttle } from 'throttle-debounce'
-
-const throttleTimeout = 200
 
 interface IDataStore {
   loggingEnabled: boolean
@@ -212,48 +209,45 @@ class StroeerVideoplayer {
           this.dispatchEvent(new Event('contentVideoEnded'))
         }
       })
-      const timeUpdateFunction = throttle(throttleTimeout, (_t: HTMLVideoElement) => {
+      videoEl.addEventListener('timeupdate', function () {
         if (ds.isContentVideo) {
-          if (!ds.contentVideoStarted && _t.currentTime >= 1) {
+          if (!ds.contentVideoStarted && this.currentTime >= 1) {
             ds.contentVideoStarted = true
-            _t.dispatchEvent(new Event('contentVideoStart'))
+            this.dispatchEvent(new Event('contentVideoStart'))
           }
-          if (!ds.contentVideoFirstOctile && _t.currentTime >= _t.duration / 8 * 1) {
+          if (!ds.contentVideoFirstOctile && this.currentTime >= this.duration / 8 * 1) {
             ds.contentVideoFirstOctile = true
-            _t.dispatchEvent(new Event('contentVideoFirstOctile'))
+            this.dispatchEvent(new Event('contentVideoFirstOctile'))
           }
-          if (!ds.contentVideoSecondOctile && _t.currentTime >= _t.duration / 8 * 2) {
+          if (!ds.contentVideoSecondOctile && this.currentTime >= this.duration / 8 * 2) {
             ds.contentVideoSecondOctile = true
-            _t.dispatchEvent(new Event('contentVideoSecondOctile'))
+            this.dispatchEvent(new Event('contentVideoSecondOctile'))
           }
-          if (!ds.contentVideoThirdOctile && _t.currentTime >= _t.duration / 8 * 3) {
+          if (!ds.contentVideoThirdOctile && this.currentTime >= this.duration / 8 * 3) {
             ds.contentVideoThirdOctile = true
-            _t.dispatchEvent(new Event('contentVideoThirdOctile'))
+            this.dispatchEvent(new Event('contentVideoThirdOctile'))
           }
-          if (!ds.contentVideoMidpoint && _t.currentTime >= _t.duration / 8 * 4) {
+          if (!ds.contentVideoMidpoint && this.currentTime >= this.duration / 8 * 4) {
             ds.contentVideoMidpoint = true
-            _t.dispatchEvent(new Event('contentVideoMidpoint'))
+            this.dispatchEvent(new Event('contentVideoMidpoint'))
           }
-          if (!ds.contentVideoFifthOctile && _t.currentTime >= _t.duration / 8 * 5) {
+          if (!ds.contentVideoFifthOctile && this.currentTime >= this.duration / 8 * 5) {
             ds.contentVideoFifthOctile = true
-            _t.dispatchEvent(new Event('contentVideoFifthOctile'))
+            this.dispatchEvent(new Event('contentVideoFifthOctile'))
           }
-          if (!ds.contentVideoSixthOctile && _t.currentTime >= _t.duration / 8 * 6) {
+          if (!ds.contentVideoSixthOctile && this.currentTime >= this.duration / 8 * 6) {
             ds.contentVideoSixthOctile = true
-            _t.dispatchEvent(new Event('contentVideoSixthOctile'))
+            this.dispatchEvent(new Event('contentVideoSixthOctile'))
           }
-          if (!ds.contentVideoSeventhOctile && _t.currentTime >= _t.duration / 8 * 7) {
+          if (!ds.contentVideoSeventhOctile && this.currentTime >= this.duration / 8 * 7) {
             ds.contentVideoSeventhOctile = true
-            _t.dispatchEvent(new Event('contentVideoSeventhOctile'))
+            this.dispatchEvent(new Event('contentVideoSeventhOctile'))
           }
-          if (!ds.contentVideoSixSecondsBeforeEnd && _t.currentTime >= _t.duration - 6) {
+          if (!ds.contentVideoSixSecondsBeforeEnd && this.currentTime >= this.duration - 6) {
             ds.contentVideoSixSecondsBeforeEnd = true
-            _t.dispatchEvent(new Event('contentVideoSixSecondsBeforeEnd'))
+            this.dispatchEvent(new Event('contentVideoSixSecondsBeforeEnd'))
           }
         }
-      })
-      videoEl.addEventListener('timeupdate', function () {
-        timeUpdateFunction(this)
       })
     }
     this.initUI(_dataStore.defaultUIName)
