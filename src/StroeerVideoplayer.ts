@@ -112,6 +112,7 @@ class StroeerVideoplayer {
         maxBufferSize: 0,
         maxBufferLength: 10,
         capLevelToPlayerSize: true,
+        autoStartLoad: false,
         ...hlsConfig
       }
     }
@@ -411,17 +412,6 @@ class StroeerVideoplayer {
     } else {
       return ''
     }
-  }
-
-  loadFirstChunk = (): void => {
-    const hls = this._dataStore.hls
-    if (hls === null) return
-
-    const onLevelLoaded = (): void => {
-      hls.off(HlsJs.Events.LEVEL_LOADED, onLevelLoaded)
-      hls.stopLoad()
-    }
-    hls.on(HlsJs.Events.LEVEL_LOADED, onLevelLoaded)
   }
 
   loadStreamSource = (): void => {
