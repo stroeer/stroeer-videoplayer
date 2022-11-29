@@ -112,6 +112,7 @@ class StroeerVideoplayer {
         maxBufferSize: 0,
         maxBufferLength: 10,
         capLevelToPlayerSize: true,
+        autoStartLoad: false,
         ...hlsConfig
       }
     }
