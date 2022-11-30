@@ -528,6 +528,7 @@ class StroeerVideoplayer {
     this.setAutoplay(autoplay)
     this.setMetaData(videoData)
     this.loadStreamSource()
+    this._dataStore.hls?.startLoad()
     this.play()
   }
 }
