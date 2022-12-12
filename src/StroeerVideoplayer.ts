@@ -112,6 +112,7 @@ class StroeerVideoplayer {
         maxBufferSize: 0,
         maxBufferLength: 10,
         capLevelToPlayerSize: true,
+        autoStartLoad: false,
         ...hlsConfig
       }
     }
@@ -505,6 +506,7 @@ class StroeerVideoplayer {
     this.setAutoplay(autoplay)
     this.setMetaData(videoData)
     this.loadStreamSource()
+    this._dataStore.hls?.startLoad()
     this.play()
   }
 }
