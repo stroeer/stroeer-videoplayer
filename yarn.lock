@@ -723,10 +723,10 @@
   resolved "https://registry.npmjs.org/@socket.io/component-emitter/-/component-emitter-3.0.0.tgz"
   integrity sha512-2pTGuibAXJswAPJjaKisthqS/NOK5ypG4LYT6tEAV0S/mxW0zOIvYvGK0V8w8+SHxAm6vRMSjqSalFXeBAqs+Q==
 
-"@stroeer/stroeer-videoplayer-default-ui@0.0.43":
-  version "0.0.43"
-  resolved "https://registry.npmjs.org/@stroeer/stroeer-videoplayer-default-ui/-/stroeer-videoplayer-default-ui-0.0.43.tgz"
-  integrity sha512-CYc9OBsJ4jkBC2TQGIB3gfIyxN5tPmFVPlpGdbYPUY0NDOHJeKEWM9aPJ6ktEbX7lIKiL1BvwzJgsayBgnDINQ==
+"@stroeer/stroeer-videoplayer-default-ui@3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@stroeer/stroeer-videoplayer-default-ui/-/stroeer-videoplayer-default-ui-3.1.2.tgz#4c6c9edb53dd7c6811384cd29552883d384c813a"
+  integrity sha512-CqNCUZaWjXfK7G1AOd45MA/UGGs+gquL8UzCrn+/O6PN8qO1Yc2cb+NfBm92F2zMNOKB4lQ8dWD1tmJb2uUHCA==
 
 "@tootallnate/once@1":
   version "1.1.2"
@@ -2578,10 +2578,10 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hls.js@1.2.4:
-  version "1.2.4"
-  resolved "https://registry.npmjs.org/hls.js/-/hls.js-1.2.4.tgz"
-  integrity sha512-yC3K79Kzq1W+OgjT12JxKMDXv9DbfvulppxmPBl7D04SaTyd2IwWk5eNASQV1mUaPlKbjr16yI9292qpSGo0ig==
+hls.js@1.2.9:
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/hls.js/-/hls.js-1.2.9.tgz#2f25e42ec4c2ea8c88ab23c0f854f39062d45ac9"
+  integrity sha512-SPjm8ix0xe6cYzwDvdVGh2QvQPDkCYrGWpZu6bRaKNNVyEGWM9uF0pooh/Lqj/g8QBQgPFEx1vHzW8SyMY9rqg==
 
 hosted-git-info@^2.1.4:
   version "2.8.9"

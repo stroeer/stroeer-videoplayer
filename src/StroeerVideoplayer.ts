@@ -400,7 +400,7 @@ class StroeerVideoplayer {
 
     if (videoSource === null) return
 
-    if (!canPlayNativeHls && HlsJs.isSupported()) {
+    if (HlsJs.isSupported()) {
       if (this._dataStore.hls !== null) {
         this._dataStore.hls.destroy()
         this._dataStore.hls = null
@@ -425,13 +425,18 @@ class StroeerVideoplayer {
               hls.startLoad()
               break
             case HlsJs.ErrorTypes.MEDIA_ERROR:
-              // This seems to be a bit buggy, so we're going to ignore it for now
-              // it seems as if it breaks the video playback and you can't resume it,
-              // even though it's stated in the docs that it's supposed to recover from this error and is best practice
-              // log('error')('fatal media error encountered, try to recover')
-              hls.recoverMediaError()
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
-              videoEl.play()
+              // 📌 If not BUFFER_STALLED_ERROR, try to recover media Error
+              //
+              // It seems that if you always recover this error,
+              // you will get stuck in an endless loop
+              // of the video being stuck at the same time and loading spinner being shown.
+              // Therefore we only recover if the error is not BUFFER_STALLED_ERROR.
+              if (data.details !== HlsJs.ErrorDetails.BUFFER_STALLED_ERROR) {
+                log('error')('fatal media error encountered, try to recover')
+                hls.recoverMediaError()
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                videoEl.play()
+              }
               break
             default:
               log('error')('fatal error encountered, cannot recover', data.type)
@@ -440,7 +445,7 @@ class StroeerVideoplayer {
           }
         }
       })
-    } else {
+    } else if (canPlayNativeHls) {
       // Fallback for native HLS
       // We need to check the manifest response code manually
       window.fetch(this.getSource(), { mode: 'cors', cache: 'no-cache' })
@@ -468,6 +473,8 @@ class StroeerVideoplayer {
             }
           }))
         })
+    } else {
+      console.error("Your browser doesn't support HLS")
     }
   }
 
