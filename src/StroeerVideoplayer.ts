@@ -128,28 +128,6 @@ class StroeerVideoplayer {
 
       videoEl.dispatchEvent(new Event('stroeer-videoplayer:initialized'))
 
-      const onVisibilityChangeCallback = (): void => {
-        if (document.hidden) {
-          if (!videoEl.paused) {
-            ds.wasPlayingOnTabLeave = true
-            videoEl.pause()
-          }
-        } else {
-          if (ds.wasPlayingOnTabLeave) {
-            ds.wasPlayingOnTabLeave = false
-            void videoEl.play()
-          }
-        }
-      }
-
-      if (videoEl.getAttribute('data-disable-pause-on-tab-leave') === null) {
-        document.addEventListener(
-          'visibilitychange',
-          onVisibilityChangeCallback,
-          false
-        )
-      }
-
       if (ds.videoEl.parentNode !== null) {
         ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
         ds.containmentEl.appendChild(ds.uiEl)

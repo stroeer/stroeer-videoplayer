@@ -1,5 +1,5 @@
 {
- "version": "3.0.0",
+ "version": "3.1.0",
  "name": "@stroeer/stroeer-videoplayer",
  "description": "Ströer Videoplayer Framework",
  "main": "dist/StroeerVideoplayer.cjs.js",
