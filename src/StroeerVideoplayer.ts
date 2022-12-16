@@ -128,28 +128,6 @@ class StroeerVideoplayer {
 
       videoEl.dispatchEvent(new Event('stroeer-videoplayer:initialized'))
 
-      const onVisibilityChangeCallback = (): void => {
-        if (document.hidden) {
-          if (!videoEl.paused) {
-            ds.wasPlayingOnTabLeave = true
-            videoEl.pause()
-          }
-        } else {
-          if (ds.wasPlayingOnTabLeave) {
-            ds.wasPlayingOnTabLeave = false
-            void videoEl.play()
-          }
-        }
-      }
-
-      if (videoEl.getAttribute('data-disable-pause-on-tab-leave') === null) {
-        document.addEventListener(
-          'visibilitychange',
-          onVisibilityChangeCallback,
-          false
-        )
-      }
-
       if (ds.videoEl.parentNode !== null) {
         ds.videoEl.parentNode.insertBefore(ds.rootEl, ds.videoEl)
         ds.containmentEl.appendChild(ds.uiEl)
@@ -422,7 +400,7 @@ class StroeerVideoplayer {
 
     if (videoSource === null) return
 
-    if (!canPlayNativeHls && HlsJs.isSupported()) {
+    if (HlsJs.isSupported()) {
       if (this._dataStore.hls !== null) {
         this._dataStore.hls.destroy()
         this._dataStore.hls = null
@@ -451,7 +429,6 @@ class StroeerVideoplayer {
               hls.startLoad()
               break
             case HlsJs.ErrorTypes.MEDIA_ERROR:
-
               // 📌 If not BUFFER_STALLED_ERROR, BUFFER_NUDGE_ON_STALL
               // try to recover media Error
               // It seems that if you always recover this error,
@@ -477,7 +454,7 @@ class StroeerVideoplayer {
           }
         }
       })
-    } else {
+    } else if (canPlayNativeHls) {
       // Fallback for native HLS
       // We need to check the manifest response code manually
       window.fetch(this.getSource(), { mode: 'cors', cache: 'no-cache' })
@@ -505,6 +482,8 @@ class StroeerVideoplayer {
             }
           }))
         })
+    } else {
+      console.error("Your browser doesn't support HLS")
     }
   }
 
