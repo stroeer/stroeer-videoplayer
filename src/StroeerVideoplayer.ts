@@ -442,18 +442,33 @@ class StroeerVideoplayer {
           switch (data.type) {
             case HlsJs.ErrorTypes.NETWORK_ERROR:
               // try to recover network error
-              log('error')('fatal network error encountered, try to recover')
+              // These error happened in test phases
+              // [TODO] handle them
+              // levelLoadTimeOut = LEVEL_LOAD_TIMEOUT
+              // fragLoadTimeOut = FRAG_LOAD_TIMEOUT
+              log('error')('fatal network error encountered, try to recover', data)
               videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', { detail: data }))
               hls.startLoad()
               break
             case HlsJs.ErrorTypes.MEDIA_ERROR:
-              // This seems to be a bit buggy, so we're going to ignore it for now
-              // it seems as if it breaks the video playback and you can't resume it,
-              // even though it's stated in the docs that it's supposed to recover from this error and is best practice
-              // log('error')('fatal media error encountered, try to recover')
-              hls.recoverMediaError()
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
-              videoEl.play()
+
+              // 📌 If not BUFFER_STALLED_ERROR, BUFFER_NUDGE_ON_STALL
+              // try to recover media Error
+              // It seems that if you always recover this error,
+              // you will get stuck in an endless loop
+              // of the video being stuck at the same time and loading spinner being shown.
+              // Therefore we only recover if the error is not BUFFER_STALLED_ERROR.
+              // In each case, we log out some debugging info
+              if (data.details === HlsJs.ErrorDetails.BUFFER_STALLED_ERROR) {
+                log('error')('MEDIA_ERROR_BUFFER_STALLED', data.details)
+              } else if (data.details === HlsJs.ErrorDetails.BUFFER_NUDGE_ON_STALL) {
+                log('error')('MEDIA_ERROR_BUFFER_NUDGE_ON_STALL', data.details)
+              } else {
+                log('error')('fatal media error encountered, try to recover', data.details)
+                hls.recoverMediaError()
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                videoEl.play()
+              }
               break
             default:
               log('error')('fatal error encountered, cannot recover', data.type)
