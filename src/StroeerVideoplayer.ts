@@ -394,11 +394,11 @@ class StroeerVideoplayer {
 
   loadStreamSource = (): void => {
     const videoEl = this._dataStore.videoEl
-    const videoSource = videoEl.querySelector('source')
+    const videoSource = videoEl.dataset.src as string
     const canPlayNativeHls = videoEl.canPlayType('application/vnd.apple.mpegurl') === 'probably' ||
       videoEl.canPlayType('application/vnd.apple.mpegurl') === 'maybe'
 
-    if (videoSource === null) return
+    if (videoSource === '') return
 
     if (HlsJs.isSupported()) {
       if (this._dataStore.hls !== null) {
@@ -411,7 +411,7 @@ class StroeerVideoplayer {
         videoEl.dispatchEvent(new CustomEvent('hlsLevelSwitched', { detail: level }))
       })
       this._dataStore.hls = hls
-      hls.loadSource(videoSource.src)
+      hls.loadSource(videoSource)
       hls.attachMedia(videoEl)
 
       hls.on(HlsJs.Events.ERROR, (event: any, data: any) => {
@@ -455,6 +455,7 @@ class StroeerVideoplayer {
         }
       })
     } else if (canPlayNativeHls) {
+      videoEl.src = videoSource
       // Fallback for native HLS
       // We need to check the manifest response code manually
       window.fetch(this.getSource(), { mode: 'cors', cache: 'no-cache' })
@@ -502,8 +503,7 @@ class StroeerVideoplayer {
 
   setSrc = (playlist: string): void => {
     const videoEl = this._dataStore.videoEl
-    videoEl.innerHTML = `<source src="${playlist}" type="application/x-mpegURL">`
-    videoEl.load()
+    videoEl.dataset.src = playlist
     videoEl.currentTime = 0
   }
 
