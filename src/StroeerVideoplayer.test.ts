@@ -357,8 +357,7 @@ it('should play video', () => {
 it('should set new source to HTML', () => {
   const src = 'https://lx57.spieletips.de/977412104/playlist.m3u8'
   p1.setSrc(src)
-  const videoSources = videoEl.getElementsByTagName('source')
-  expect(videoSources[0].src).toEqual(src)
+  expect(videoEl.dataset.src).toEqual(src)
 })
 
 it('should set and get poster image', () => {
