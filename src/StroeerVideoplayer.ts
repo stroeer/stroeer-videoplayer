@@ -90,7 +90,7 @@ class StroeerVideoplayer {
       rootEl: document.createElement('div'),
       containmentEl: document.createElement('div'),
       uiEl: document.createElement('div'),
-      contentVideoInitialSrc: videoEl.querySelector('source')?.src ?? '',
+      contentVideoInitialSrc: videoEl.getAttribute('data-src') ?? '',
       videoFirstPlay: true,
       contentVideoStarted: false,
       contentVideoEnded: false,
@@ -120,7 +120,6 @@ class StroeerVideoplayer {
 
     log()('StroeerVideoplayer.version', version)
     log()('StroeerVideoplayer.HlsJs.version', HlsJs.version)
-
     const ds = this._dataStore
 
     if (videoEl.getAttribute('data-stroeervp-initialized') === null) {
@@ -153,7 +152,7 @@ class StroeerVideoplayer {
           }
           if (ds.contentVideoEnded) {
             ds.contentVideoEnded = false
-            const currentSrc = this.querySelector('source')?.src ?? ''
+            const currentSrc = this.getAttribute('src') ?? ''
             if (ds.contentVideoInitialSrc === currentSrc) {
               this.dispatchEvent(new Event('contentVideoReplay'))
             } else {
