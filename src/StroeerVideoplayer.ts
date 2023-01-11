@@ -415,6 +415,13 @@ class StroeerVideoplayer {
 
       hls.on(HlsJs.Events.ERROR, (event: any, data: any) => {
         log('error')('HlsJs.Events.Error', event, data)
+        videoEl.dispatchEvent(new CustomEvent('error', {
+          detail: {
+            type: 'hlsjs',
+            event,
+            data
+          }
+        }))
         if (data.fatal !== undefined) {
           switch (data.type) {
             case HlsJs.ErrorTypes.NETWORK_ERROR:
@@ -474,6 +481,13 @@ class StroeerVideoplayer {
         })
         .catch((error) => {
           console.log('error fetching manifest', error)
+          videoEl.dispatchEvent(new CustomEvent('error', {
+            detail: {
+              type: 'hls',
+              message: 'Error fetching manifest',
+              error: error
+            }
+          }))
           videoEl.dispatchEvent(new CustomEvent('hlsNetworkError', {
             detail: {
               response: {
@@ -484,6 +498,12 @@ class StroeerVideoplayer {
         })
     } else {
       console.error("Your browser doesn't support HLS")
+      videoEl.dispatchEvent(new CustomEvent('error', {
+        detail: {
+          type: 'hls',
+          message: "Browser doesn't support HLS"
+        }
+      }))
     }
   }
 
