@@ -63,6 +63,7 @@ interface IStroeerVideoplayerDataStore {
   activePlugins: Map<string, IConstructedRegisteredPlugin>
   hls: null | HlsJs
   hlsConfig: Object
+  hlsErrorHappend: boolean
 }
 
 interface StroeerVideoplayerVideoElement extends HTMLVideoElement {
@@ -115,7 +116,8 @@ class StroeerVideoplayer {
         autoStartLoad: false,
         ignoreDevicePixelRatio: true,
         ...hlsConfig
-      }
+      },
+      hlsErrorHappend: false
     }
     this.version = version
 
@@ -410,6 +412,13 @@ class StroeerVideoplayer {
         const level = hls.levels[data.level]
         videoEl.dispatchEvent(new CustomEvent('hlsLevelSwitched', { detail: level }))
       })
+      hls.on(HlsJs.Events.BUFFER_APPENDED, (event: any, data: any) => {
+        if (this._dataStore.hlsErrorHappend && data.type === 'video') {
+          this._dataStore.hlsErrorHappend = false
+          log('error')('RECOVERED', event, data)
+          videoEl.dispatchEvent(new CustomEvent('hlsErrorRecovered', { detail: data }))
+        }
+      })
       this._dataStore.hls = hls
       hls.loadSource(videoSource)
       hls.attachMedia(videoEl)
@@ -423,6 +432,7 @@ class StroeerVideoplayer {
             data
           }
         }))
+        this._dataStore.hlsErrorHappend = true
         if (data.fatal !== undefined) {
           switch (data.type) {
             case HlsJs.ErrorTypes.NETWORK_ERROR:
